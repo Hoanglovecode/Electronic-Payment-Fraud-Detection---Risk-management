@@ -3,6 +3,8 @@
 > **High-Performance C++ Core & Machine Learning Hybrid System**  
 > An educational, production-grade simulation system for real-time payment fraud detection, multi-factor risk scoring, automated decision engine, and continuous feedback loop.
 
+*Project created and developed by team members: Hoang, Khiem, and Triet.*
+
 ---
 
 ## 🛠️ Technology Stack & System Breakdown
