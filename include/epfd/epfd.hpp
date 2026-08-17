@@ -35,4 +35,12 @@
 #include "epfd/database/InMemoryRepositories.hpp"
 #include "epfd/utils/Observer.hpp"
 
+// Data Structures & Algorithms (DSA)
+#include "epfd/dsa/TimeWindowBuffer.hpp"
+#include "epfd/dsa/CustomerVelocityTracker.hpp"
+#include "epfd/dsa/FastLookupIndex.hpp"
+#include "epfd/dsa/InvestigationPriorityQueue.hpp"
+#include "epfd/dsa/FraudRingGraph.hpp"
+#include "epfd/dsa/RiskRankingUtils.hpp"
+
 #endif // EPFD_EPFD_HPP

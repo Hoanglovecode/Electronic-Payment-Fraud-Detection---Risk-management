@@ -12,10 +12,19 @@ SRCS_CORE = src/common/Types.cpp \
             src/models/RiskAssessment.cpp \
             src/models/Dispute.cpp \
             src/models/Transaction.cpp \
-            src/database/InMemoryRepositories.cpp
+            src/database/InMemoryRepositories.cpp \
+            src/dsa/TimeWindowBuffer.cpp \
+            src/dsa/CustomerVelocityTracker.cpp \
+            src/dsa/FastLookupIndex.cpp \
+            src/dsa/FraudRingGraph.cpp \
+            src/dsa/RiskRankingUtils.cpp
 
 SRCS_APP = src/main.cpp
-SRCS_TEST = tests/main_test.cpp tests/test_architecture.cpp tests/test_domain_models.cpp tests/test_solid_and_patterns.cpp
+SRCS_TEST = tests/main_test.cpp \
+            tests/test_architecture.cpp \
+            tests/test_domain_models.cpp \
+            tests/test_solid_and_patterns.cpp \
+            tests/test_dsa_and_algorithms.cpp
 
 BIN_DIR = bin
 
