@@ -21,4 +21,18 @@
 #include "epfd/models/Dispute.hpp"
 #include "epfd/models/Transaction.hpp"
 
+// OOP Interfaces & Patterns (SOLID)
+#include "epfd/fraud/IFraudRule.hpp"
+#include "epfd/fraud/IFraudDetector.hpp"
+#include "epfd/ml/IModelPredictor.hpp"
+#include "epfd/ml/MockModelPredictor.hpp"
+#include "epfd/risk/IRiskRule.hpp"
+#include "epfd/risk/IRiskPolicy.hpp"
+#include "epfd/decision/IDecisionPolicy.hpp"
+#include "epfd/database/IRepository.hpp"
+#include "epfd/database/ITransactionRepository.hpp"
+#include "epfd/database/ICustomerRepository.hpp"
+#include "epfd/database/InMemoryRepositories.hpp"
+#include "epfd/utils/Observer.hpp"
+
 #endif // EPFD_EPFD_HPP

@@ -11,10 +11,11 @@ SRCS_CORE = src/common/Types.cpp \
             src/models/FraudAlert.cpp \
             src/models/RiskAssessment.cpp \
             src/models/Dispute.cpp \
-            src/models/Transaction.cpp
+            src/models/Transaction.cpp \
+            src/database/InMemoryRepositories.cpp
 
 SRCS_APP = src/main.cpp
-SRCS_TEST = tests/main_test.cpp tests/test_architecture.cpp tests/test_domain_models.cpp
+SRCS_TEST = tests/main_test.cpp tests/test_architecture.cpp tests/test_domain_models.cpp tests/test_solid_and_patterns.cpp
 
 BIN_DIR = bin
 
