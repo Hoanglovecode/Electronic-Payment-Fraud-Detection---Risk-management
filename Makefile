@@ -1,14 +1,22 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -Iinclude
 
-SRCS_CORE = src/common/Types.cpp
-OBJS_CORE = $(SRCS_CORE:.cpp=.o)
+SRCS_CORE = src/common/Types.cpp \
+            src/models/Location.cpp \
+            src/models/Device.cpp \
+            src/models/PaymentMethod.cpp \
+            src/models/Merchant.cpp \
+            src/models/Account.cpp \
+            src/models/Customer.cpp \
+            src/models/FraudAlert.cpp \
+            src/models/RiskAssessment.cpp \
+            src/models/Dispute.cpp \
+            src/models/Transaction.cpp
 
 SRCS_APP = src/main.cpp
-SRCS_TEST = tests/main_test.cpp tests/test_architecture.cpp
+SRCS_TEST = tests/main_test.cpp tests/test_architecture.cpp tests/test_domain_models.cpp
 
 BIN_DIR = bin
-BUILD_DIR = build_objs
 
 TARGET_APP = $(BIN_DIR)/epfd_app.exe
 TARGET_TEST = $(BIN_DIR)/epfd_tests.exe

@@ -1,4 +1,5 @@
 #include "epfd/common/Types.hpp"
+#include <iostream>
 
 namespace epfd {
 
@@ -61,6 +62,20 @@ std::string_view toString(DecisionAction action) {
     return "UNKNOWN";
 }
 
+std::string_view toString(FraudRuleCategory category) {
+    switch (category) {
+        case FraudRuleCategory::VELOCITY:          return "VELOCITY";
+        case FraudRuleCategory::AMOUNT_DEVIATION:  return "AMOUNT_DEVIATION";
+        case FraudRuleCategory::GEO_LOCATION:      return "GEO_LOCATION";
+        case FraudRuleCategory::DEVICE_INTEGRITY:  return "DEVICE_INTEGRITY";
+        case FraudRuleCategory::CARD_TESTING:      return "CARD_TESTING";
+        case FraudRuleCategory::ACCOUNT_TAKEOVER:  return "ACCOUNT_TAKEOVER";
+        case FraudRuleCategory::LIST_MATCHING:     return "LIST_MATCHING";
+        case FraudRuleCategory::BEHAVIORAL:        return "BEHAVIORAL";
+    }
+    return "UNKNOWN";
+}
+
 std::string_view toString(CaseStatus status) {
     switch (status) {
         case CaseStatus::OPEN:                     return "OPEN";
@@ -79,6 +94,38 @@ std::string_view toString(GroundTruthLabel label) {
         case GroundTruthLabel::UNKNOWN:    return "UNKNOWN";
     }
     return "UNKNOWN";
+}
+
+std::ostream& operator<<(std::ostream& os, TransactionType type) {
+    return os << toString(type);
+}
+
+std::ostream& operator<<(std::ostream& os, TransactionStatus status) {
+    return os << toString(status);
+}
+
+std::ostream& operator<<(std::ostream& os, PaymentType type) {
+    return os << toString(type);
+}
+
+std::ostream& operator<<(std::ostream& os, RiskLevel level) {
+    return os << toString(level);
+}
+
+std::ostream& operator<<(std::ostream& os, DecisionAction action) {
+    return os << toString(action);
+}
+
+std::ostream& operator<<(std::ostream& os, FraudRuleCategory category) {
+    return os << toString(category);
+}
+
+std::ostream& operator<<(std::ostream& os, CaseStatus status) {
+    return os << toString(status);
+}
+
+std::ostream& operator<<(std::ostream& os, GroundTruthLabel label) {
+    return os << toString(label);
 }
 
 } // namespace epfd
