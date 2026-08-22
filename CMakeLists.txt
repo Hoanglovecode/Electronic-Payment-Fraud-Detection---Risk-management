@@ -12,6 +12,7 @@ include_directories(include)
 file(GLOB_RECURSE EPFD_CORE_SRCS 
     "src/common/*.cpp"
     "src/models/*.cpp"
+    "src/dsa/*.cpp"
     "src/validation/*.cpp"
     "src/features/*.cpp"
     "src/fraud/*.cpp"

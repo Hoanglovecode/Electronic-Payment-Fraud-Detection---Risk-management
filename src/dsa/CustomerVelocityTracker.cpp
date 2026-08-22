@@ -6,7 +6,9 @@ void CustomerVelocityTracker::recordTransaction(const std::string& entity_id, Ti
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = profiles_.find(entity_id);
     if (it == profiles_.end()) {
-        it = profiles_.emplace(entity_id, std::make_unique<EntityVelocityProfile>()).first;
+        auto profile = std::make_shared<EntityVelocityProfile>();
+        profiles_.insert(entity_id, profile);
+        it = profiles_.find(entity_id);
     }
 
     it->second->window_5m.add(ts, amount);

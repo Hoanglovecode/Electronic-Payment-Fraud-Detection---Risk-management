@@ -17,14 +17,26 @@ SRCS_CORE = src/common/Types.cpp \
             src/dsa/CustomerVelocityTracker.cpp \
             src/dsa/FastLookupIndex.cpp \
             src/dsa/FraudRingGraph.cpp \
-            src/dsa/RiskRankingUtils.cpp
+            src/dsa/RiskRankingUtils.cpp \
+            src/validation/TransactionValidator.cpp \
+            src/features/FeatureExtractor.cpp \
+            src/fraud/ConcreteFraudRules.cpp \
+            src/fraud/FraudDetectorEngine.cpp \
+            src/risk/RiskAggregator.cpp \
+            src/risk/ConcreteRiskPolicies.cpp \
+            src/risk/RiskEngine.cpp \
+            src/services/TransactionService.cpp
 
 SRCS_APP = src/main.cpp
 SRCS_TEST = tests/main_test.cpp \
             tests/test_architecture.cpp \
             tests/test_domain_models.cpp \
             tests/test_solid_and_patterns.cpp \
-            tests/test_dsa_and_algorithms.cpp
+            tests/test_dsa_and_algorithms.cpp \
+            tests/test_validation_and_services.cpp \
+            tests/test_feature_engineering.cpp \
+            tests/test_rule_based_fraud_detection.cpp \
+            tests/test_risk_management_engine.cpp
 
 BIN_DIR = bin
 

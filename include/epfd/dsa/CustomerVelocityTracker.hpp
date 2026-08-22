@@ -1,10 +1,10 @@
 #ifndef EPFD_DSA_CUSTOMER_VELOCITY_TRACKER_HPP
 #define EPFD_DSA_CUSTOMER_VELOCITY_TRACKER_HPP
 
-#include <unordered_map>
 #include <memory>
 #include <mutex>
 #include "epfd/dsa/TimeWindowBuffer.hpp"
+#include "epfd/dsa/HashMap.hpp"
 #include "epfd/common/Constants.hpp"
 
 namespace epfd {
@@ -27,7 +27,7 @@ struct EntityVelocityProfile {
 
 /**
  * @brief High-performance tracker for customer and card velocity signals.
- * Uses std::unordered_map of Sliding Windows with thread-safety.
+ * Uses custom epfd::dsa::HashMap of Sliding Windows with thread-safety.
  */
 class CustomerVelocityTracker {
 public:
@@ -38,7 +38,7 @@ public:
     void clear();
 
 private:
-    std::unordered_map<std::string, std::unique_ptr<EntityVelocityProfile>> profiles_;
+    dsa::HashMap<std::string, std::shared_ptr<EntityVelocityProfile>> profiles_;
     mutable std::mutex mutex_;
 };
 

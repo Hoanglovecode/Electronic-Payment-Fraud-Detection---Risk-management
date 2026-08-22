@@ -11,16 +11,21 @@ void TimeWindowBuffer::add(Timestamp ts, double amount) {
     if (entries_.empty() || ts >= entries_.back().timestamp) {
         entries_.push_back({ts, amount});
     } else {
-        auto it = std::upper_bound(entries_.begin(), entries_.end(), ts, [](Timestamp val, const WindowEntry& e) {
-            return val < e.timestamp;
-        });
-        entries_.insert(it, {ts, amount});
+        // Find insert position in circular deque
+        size_t idx = 0;
+        while (idx < entries_.size() && entries_[idx].timestamp <= ts) {
+            ++idx;
+        }
+        // Shift or append
+        entries_.push_back({ts, amount});
+        for (size_t i = entries_.size() - 1; i > idx; --i) {
+            std::swap(entries_[i], entries_[i - 1]);
+        }
     }
     running_sum_ += amount;
 }
 
 void TimeWindowBuffer::prune(Timestamp current_time) {
-    // Note: Assumes mutex is held or called by internal methods with lock
     auto cutoff = current_time - window_duration_;
     while (!entries_.empty() && entries_.front().timestamp < cutoff) {
         running_sum_ -= entries_.front().amount;
@@ -59,9 +64,9 @@ double TimeWindowBuffer::getMax(Timestamp current_time) {
         return 0.0;
     }
     double max_val = entries_.front().amount;
-    for (const auto& entry : entries_) {
-        if (entry.amount > max_val) {
-            max_val = entry.amount;
+    for (size_t i = 0; i < entries_.size(); ++i) {
+        if (entries_[i].amount > max_val) {
+            max_val = entries_[i].amount;
         }
     }
     return max_val;

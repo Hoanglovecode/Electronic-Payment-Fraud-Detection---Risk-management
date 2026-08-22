@@ -1,10 +1,10 @@
 #ifndef EPFD_DSA_TIME_WINDOW_BUFFER_HPP
 #define EPFD_DSA_TIME_WINDOW_BUFFER_HPP
 
-#include <deque>
 #include <chrono>
 #include <mutex>
 #include "epfd/common/Types.hpp"
+#include "epfd/dsa/Deque.hpp"
 
 namespace epfd {
 
@@ -14,7 +14,7 @@ struct WindowEntry {
 };
 
 /**
- * @brief Thread-safe Sliding Window Buffer using std::deque.
+ * @brief Thread-safe Sliding Window Buffer using custom epfd::dsa::Deque.
  * Maintains running sum and count with O(1) amortized additions and queries.
  */
 class TimeWindowBuffer {
@@ -34,7 +34,7 @@ public:
 
 private:
     std::chrono::seconds window_duration_;
-    std::deque<WindowEntry> entries_;
+    dsa::Deque<WindowEntry> entries_;
     double running_sum_{0.0};
     mutable std::mutex mutex_;
 };

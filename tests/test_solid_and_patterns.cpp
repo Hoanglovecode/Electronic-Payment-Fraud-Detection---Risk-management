@@ -29,6 +29,10 @@ public:
         return std::nullopt;
     }
 
+    std::optional<FraudAlert> evaluate(const Transaction& tx, const TransactionFeatures&) const override {
+        return evaluate(tx);
+    }
+
 private:
     double threshold_;
 };
@@ -52,6 +56,10 @@ public:
                               RiskLevel::MEDIUM);
         }
         return std::nullopt;
+    }
+
+    std::optional<FraudAlert> evaluate(const Transaction& tx, const TransactionFeatures&) const override {
+        return evaluate(tx);
     }
 
 private:

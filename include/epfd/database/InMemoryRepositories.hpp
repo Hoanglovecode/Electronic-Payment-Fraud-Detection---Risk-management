@@ -5,6 +5,7 @@
 #include <mutex>
 #include "epfd/database/ITransactionRepository.hpp"
 #include "epfd/database/ICustomerRepository.hpp"
+#include "epfd/database/IAccountRepository.hpp"
 
 namespace epfd {
 
@@ -42,6 +43,22 @@ public:
 private:
     mutable std::mutex mutex_;
     std::unordered_map<std::string, Customer> storage_;
+};
+
+class InMemoryAccountRepository : public IAccountRepository {
+public:
+    bool save(const Account& entity) override;
+    std::optional<Account> findById(const std::string& id) const override;
+    std::vector<Account> findAll() const override;
+    bool remove(const std::string& id) override;
+    size_t count() const override;
+    void clear() override;
+
+    std::vector<Account> findByCustomerId(const std::string& customer_id) const override;
+
+private:
+    mutable std::mutex mutex_;
+    std::unordered_map<std::string, Account> storage_;
 };
 
 } // namespace epfd

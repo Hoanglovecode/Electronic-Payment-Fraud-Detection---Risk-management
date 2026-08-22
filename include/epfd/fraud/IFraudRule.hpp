@@ -5,6 +5,7 @@
 #include <optional>
 #include "epfd/models/Transaction.hpp"
 #include "epfd/models/FraudAlert.hpp"
+#include "epfd/features/TransactionFeatures.hpp"
 
 namespace epfd {
 
@@ -24,9 +25,12 @@ public:
     virtual void setEnabled(bool enabled) noexcept = 0;
 
     /**
-     * @brief Evaluates a transaction against this rule.
-     * @param tx The transaction under analysis.
-     * @return FraudAlert if the rule triggered, std::nullopt otherwise.
+     * @brief Evaluates a transaction against this rule with pre-extracted features.
+     */
+    virtual std::optional<FraudAlert> evaluate(const Transaction& tx, const TransactionFeatures& features) const = 0;
+
+    /**
+     * @brief Evaluates a transaction against this rule (standalone overload).
      */
     virtual std::optional<FraudAlert> evaluate(const Transaction& tx) const = 0;
 };
@@ -45,6 +49,15 @@ public:
     double getWeight() const noexcept override { return weight_; }
     bool isEnabled() const noexcept override { return enabled_; }
     void setEnabled(bool enabled) noexcept override { enabled_ = enabled; }
+
+    std::optional<FraudAlert> evaluate(const Transaction& tx) const override {
+        TransactionFeatures dummy;
+        return evaluate(tx, dummy);
+    }
+
+    std::optional<FraudAlert> evaluate(const Transaction& /*tx*/, const TransactionFeatures& /*features*/) const override {
+        return std::nullopt;
+    }
 
 protected:
     std::string id_;

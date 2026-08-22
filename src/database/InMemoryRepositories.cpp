@@ -160,4 +160,59 @@ std::vector<Customer> InMemoryCustomerRepository::findBlacklisted() const {
     return result;
 }
 
+// ==========================================
+// InMemoryAccountRepository
+// ==========================================
+
+bool InMemoryAccountRepository::save(const Account& entity) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_[entity.getAccountId()] = entity;
+    return true;
+}
+
+std::optional<Account> InMemoryAccountRepository::findById(const std::string& id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = storage_.find(id);
+    if (it != storage_.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
+
+std::vector<Account> InMemoryAccountRepository::findAll() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Account> result;
+    result.reserve(storage_.size());
+    for (const auto& [_, acc] : storage_) {
+        result.push_back(acc);
+    }
+    return result;
+}
+
+bool InMemoryAccountRepository::remove(const std::string& id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.erase(id) > 0;
+}
+
+size_t InMemoryAccountRepository::count() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.size();
+}
+
+void InMemoryAccountRepository::clear() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_.clear();
+}
+
+std::vector<Account> InMemoryAccountRepository::findByCustomerId(const std::string& customer_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Account> result;
+    for (const auto& [_, acc] : storage_) {
+        if (acc.getCustomerId() == customer_id) {
+            result.push_back(acc);
+        }
+    }
+    return result;
+}
+
 } // namespace epfd

@@ -44,7 +44,7 @@ size_t FastLookupIndex::getAccountCountOnCard(const std::string& card_bin_or_has
     return 0;
 }
 
-std::unordered_set<std::string> FastLookupIndex::getCustomersOnDevice(const std::string& device_fingerprint) const {
+dsa::HashSet<std::string> FastLookupIndex::getCustomersOnDevice(const std::string& device_fingerprint) const {
     std::lock_guard<std::mutex> lock(mutex_);
     auto it = device_to_customers_.find(device_fingerprint);
     if (it != device_to_customers_.end()) {
@@ -65,7 +65,7 @@ void FastLookupIndex::removeBlacklist(const std::string& entity_key) {
 
 bool FastLookupIndex::isBlacklisted(const std::string& entity_key) const {
     std::lock_guard<std::mutex> lock(mutex_);
-    return blacklist_.find(entity_key) != blacklist_.end();
+    return blacklist_.contains(entity_key);
 }
 
 void FastLookupIndex::addWhitelist(const std::string& entity_key) {
@@ -80,7 +80,7 @@ void FastLookupIndex::removeWhitelist(const std::string& entity_key) {
 
 bool FastLookupIndex::isWhitelisted(const std::string& entity_key) const {
     std::lock_guard<std::mutex> lock(mutex_);
-    return whitelist_.find(entity_key) != whitelist_.end();
+    return whitelist_.contains(entity_key);
 }
 
 void FastLookupIndex::clear() {

@@ -1,12 +1,11 @@
 #ifndef EPFD_DSA_INVESTIGATION_PRIORITY_QUEUE_HPP
 #define EPFD_DSA_INVESTIGATION_PRIORITY_QUEUE_HPP
 
-#include <queue>
-#include <vector>
 #include <string>
 #include <chrono>
 #include <mutex>
 #include "epfd/common/Types.hpp"
+#include "epfd/dsa/PriorityQueue.hpp"
 
 namespace epfd {
 
@@ -21,7 +20,6 @@ struct InvestigationCase {
     Timestamp sla_deadline{std::chrono::system_clock::now() + std::chrono::hours(24)};
 
     double getPriorityRank() const {
-        // High risk score + higher amount + closer SLA deadline = higher rank
         double base = risk_score * 10.0 + (amount > 1000.0 ? 50.0 : 0.0);
         if (severity == RiskLevel::CRITICAL) base += 200.0;
         else if (severity == RiskLevel::HIGH) base += 100.0;
@@ -37,7 +35,7 @@ struct InvestigationCaseComparator {
 };
 
 /**
- * @brief Thread-safe Priority Queue for triaging high-risk fraud cases.
+ * @brief Thread-safe Priority Queue for triaging high-risk fraud cases using custom PriorityQueue.
  */
 class InvestigationPriorityQueue {
 public:
@@ -79,14 +77,12 @@ public:
 
     void clear() {
         std::lock_guard<std::mutex> lock(mutex_);
-        while (!pq_.empty()) {
-            pq_.pop();
-        }
+        pq_.clear();
     }
 
 private:
     mutable std::mutex mutex_;
-    std::priority_queue<InvestigationCase, std::vector<InvestigationCase>, InvestigationCaseComparator> pq_;
+    dsa::PriorityQueue<InvestigationCase, InvestigationCaseComparator> pq_;
 };
 
 } // namespace epfd

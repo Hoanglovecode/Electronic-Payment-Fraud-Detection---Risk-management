@@ -48,6 +48,7 @@ public:
 
         res.is_success = true;
         res.probability = fixed_probability_;
+        res.fraud_probability = fixed_probability_;
         auto end = std::chrono::high_resolution_clock::now();
         res.latency_ms = std::chrono::duration<double, std::milli>(end - start).count();
         return res;

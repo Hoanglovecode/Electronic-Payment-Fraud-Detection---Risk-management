@@ -2,16 +2,15 @@
 #define EPFD_DSA_FAST_LOOKUP_INDEX_HPP
 
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
 #include <mutex>
 #include "epfd/models/Customer.hpp"
+#include "epfd/dsa/HashMap.hpp"
+#include "epfd/dsa/HashSet.hpp"
 
 namespace epfd {
 
 /**
- * @brief O(1) Fast in-memory lookup index using std::unordered_map & std::unordered_set.
+ * @brief O(1) Fast in-memory lookup index using custom HashMap & HashSet.
  * Tracks multi-entity associations and blacklists/whitelists.
  */
 class FastLookupIndex {
@@ -27,7 +26,7 @@ public:
     size_t getAccountCountOnIp(const std::string& ip_address) const;
     size_t getAccountCountOnCard(const std::string& card_bin_or_hash) const;
 
-    std::unordered_set<std::string> getCustomersOnDevice(const std::string& device_fingerprint) const;
+    dsa::HashSet<std::string> getCustomersOnDevice(const std::string& device_fingerprint) const;
 
     // Blacklist & Whitelist management
     void addBlacklist(const std::string& entity_key);
@@ -42,12 +41,12 @@ public:
 
 private:
     mutable std::mutex mutex_;
-    std::unordered_map<std::string, std::unordered_set<std::string>> device_to_customers_;
-    std::unordered_map<std::string, std::unordered_set<std::string>> ip_to_customers_;
-    std::unordered_map<std::string, std::unordered_set<std::string>> card_to_customers_;
+    dsa::HashMap<std::string, dsa::HashSet<std::string>> device_to_customers_;
+    dsa::HashMap<std::string, dsa::HashSet<std::string>> ip_to_customers_;
+    dsa::HashMap<std::string, dsa::HashSet<std::string>> card_to_customers_;
 
-    std::unordered_set<std::string> blacklist_;
-    std::unordered_set<std::string> whitelist_;
+    dsa::HashSet<std::string> blacklist_;
+    dsa::HashSet<std::string> whitelist_;
 };
 
 } // namespace epfd

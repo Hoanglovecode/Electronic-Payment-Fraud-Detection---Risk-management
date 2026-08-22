@@ -1,13 +1,214 @@
 #include "test_framework.hpp"
 #include "epfd/epfd.hpp"
 #include <chrono>
-#include <thread>
 
 using namespace epfd;
 using namespace std::chrono_literals;
 
 // ==========================================
-// 1. Sliding Window Buffer Suite
+// 1. Custom Vector Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomVectorOperations) {
+    dsa::Vector<int> vec;
+    ASSERT_TRUE(vec.empty());
+    ASSERT_EQ(vec.size(), 0);
+
+    for (int i = 1; i <= 10; ++i) {
+        vec.push_back(i * 10);
+    }
+    ASSERT_EQ(vec.size(), 10);
+    ASSERT_EQ(vec[0], 10);
+    ASSERT_EQ(vec[9], 100);
+    ASSERT_EQ(vec.front(), 10);
+    ASSERT_EQ(vec.back(), 100);
+
+    vec.pop_back();
+    ASSERT_EQ(vec.size(), 9);
+    ASSERT_EQ(vec.back(), 90);
+
+    // Insert & Erase
+    vec.insert(vec.begin() + 2, 25);
+    ASSERT_EQ(vec[2], 25);
+    ASSERT_EQ(vec.size(), 10);
+
+    vec.erase(vec.begin() + 2);
+    ASSERT_EQ(vec[2], 30);
+    ASSERT_EQ(vec.size(), 9);
+
+    // Copy & Move
+    dsa::Vector<int> copy_vec = vec;
+    ASSERT_EQ(copy_vec.size(), 9);
+    ASSERT_EQ(copy_vec[0], 10);
+
+    dsa::Vector<int> move_vec = std::move(copy_vec);
+    ASSERT_EQ(move_vec.size(), 9);
+    ASSERT_EQ(copy_vec.size(), 0);
+}
+
+// ==========================================
+// 2. Custom Deque Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomDequeCircularOperations) {
+    dsa::Deque<std::string> deq;
+    ASSERT_TRUE(deq.empty());
+
+    deq.push_back("B");
+    deq.push_back("C");
+    deq.push_front("A"); // A, B, C
+    ASSERT_EQ(deq.size(), 3);
+    ASSERT_EQ(deq.front(), "A");
+    ASSERT_EQ(deq.back(), "C");
+    ASSERT_EQ(deq[0], "A");
+    ASSERT_EQ(deq[1], "B");
+    ASSERT_EQ(deq[2], "C");
+
+    deq.pop_front(); // B, C
+    ASSERT_EQ(deq.front(), "B");
+    ASSERT_EQ(deq.size(), 2);
+
+    deq.pop_back(); // B
+    ASSERT_EQ(deq.back(), "B");
+    ASSERT_EQ(deq.size(), 1);
+
+    // Dynamic expansion
+    for (int i = 0; i < 50; ++i) {
+        deq.push_back("item_" + std::to_string(i));
+    }
+    ASSERT_EQ(deq.size(), 51);
+}
+
+// ==========================================
+// 3. Custom LinkedList Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomLinkedListBidirectional) {
+    dsa::LinkedList<int> list;
+    list.push_back(20);
+    list.push_back(30);
+    list.push_front(10); // 10 <-> 20 <-> 30
+
+    ASSERT_EQ(list.size(), 3);
+    ASSERT_EQ(list.front(), 10);
+    ASSERT_EQ(list.back(), 30);
+
+    int sum = 0;
+    for (const auto& item : list) {
+        sum += item;
+    }
+    ASSERT_EQ(sum, 60);
+
+    list.pop_front();
+    ASSERT_EQ(list.front(), 20);
+
+    list.pop_back();
+    ASSERT_EQ(list.back(), 20);
+    ASSERT_EQ(list.size(), 1);
+}
+
+// ==========================================
+// 4. Custom HashMap Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomHashMapRehashingAndLookups) {
+    dsa::HashMap<std::string, int> map;
+    ASSERT_TRUE(map.empty());
+
+    map.insert("alice", 100);
+    map.insert("bob", 200);
+    map["charlie"] = 300;
+
+    ASSERT_EQ(map.size(), 3);
+    ASSERT_TRUE(map.contains("alice"));
+    ASSERT_TRUE(map.contains("bob"));
+    ASSERT_TRUE(map.contains("charlie"));
+    ASSERT_FALSE(map.contains("david"));
+
+    ASSERT_EQ(map.at("alice"), 100);
+    ASSERT_EQ(map["bob"], 200);
+
+    // Trigger dynamic rehashing
+    for (int i = 0; i < 100; ++i) {
+        map["user_" + std::to_string(i)] = i;
+    }
+    ASSERT_EQ(map.size(), 103);
+    ASSERT_TRUE(map.contains("user_50"));
+    ASSERT_EQ(map["user_50"], 50);
+
+    map.erase("alice");
+    ASSERT_FALSE(map.contains("alice"));
+    ASSERT_EQ(map.size(), 102);
+}
+
+// ==========================================
+// 5. Custom HashSet Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomHashSetLookups) {
+    dsa::HashSet<std::string> set;
+    set.insert("192.168.1.1");
+    set.insert("10.0.0.1");
+    set.insert("172.16.0.1");
+
+    ASSERT_EQ(set.size(), 3);
+    ASSERT_TRUE(set.contains("192.168.1.1"));
+    ASSERT_FALSE(set.contains("8.8.8.8"));
+
+    // Duplicate insert
+    auto res = set.insert("192.168.1.1");
+    ASSERT_FALSE(res.second);
+    ASSERT_EQ(set.size(), 3);
+
+    set.erase("10.0.0.1");
+    ASSERT_FALSE(set.contains("10.0.0.1"));
+    ASSERT_EQ(set.size(), 2);
+}
+
+// ==========================================
+// 6. Custom PriorityQueue Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomPriorityQueueHeapOrdering) {
+    dsa::PriorityQueue<int> max_pq;
+    max_pq.push(50);
+    max_pq.push(20);
+    max_pq.push(100);
+    max_pq.push(10);
+    max_pq.push(70);
+
+    ASSERT_EQ(max_pq.size(), 5);
+    ASSERT_EQ(max_pq.top(), 100);
+
+    max_pq.pop();
+    ASSERT_EQ(max_pq.top(), 70);
+
+    max_pq.pop();
+    ASSERT_EQ(max_pq.top(), 50);
+
+    max_pq.pop();
+    ASSERT_EQ(max_pq.top(), 20);
+
+    max_pq.pop();
+    ASSERT_EQ(max_pq.top(), 10);
+
+    max_pq.pop();
+    ASSERT_TRUE(max_pq.empty());
+}
+
+// ==========================================
+// 7. Custom Queue Unit Tests
+// ==========================================
+EPFD_TEST(CustomDsaSuite, CustomQueueFifo) {
+    dsa::Queue<int> q;
+    q.push(1);
+    q.push(2);
+    q.push(3);
+
+    ASSERT_EQ(q.front(), 1);
+    ASSERT_EQ(q.back(), 3);
+
+    q.pop();
+    ASSERT_EQ(q.front(), 2);
+    ASSERT_EQ(q.size(), 2);
+}
+
+// ==========================================
+// 8. Fraud DSA: Sliding Window Buffer Suite
 // ==========================================
 EPFD_TEST(DsaSuite, TimeWindowBufferSliding) {
     TimeWindowBuffer buffer(10s);
@@ -30,7 +231,7 @@ EPFD_TEST(DsaSuite, TimeWindowBufferSliding) {
 }
 
 // ==========================================
-// 2. Customer Velocity Tracker Suite
+// 9. Fraud DSA: Customer Velocity Tracker Suite
 // ==========================================
 EPFD_TEST(DsaSuite, CustomerVelocityMultiTier) {
     CustomerVelocityTracker tracker;
@@ -60,7 +261,7 @@ EPFD_TEST(DsaSuite, CustomerVelocityMultiTier) {
 }
 
 // ==========================================
-// 3. Fast Lookup Index Suite
+// 10. Fraud DSA: Fast Lookup Index Suite
 // ==========================================
 EPFD_TEST(DsaSuite, FastLookupIndexAssociationsAndLists) {
     FastLookupIndex index;
@@ -88,7 +289,7 @@ EPFD_TEST(DsaSuite, FastLookupIndexAssociationsAndLists) {
 }
 
 // ==========================================
-// 4. Priority Queue Triaging Suite
+// 11. Fraud DSA: Priority Queue Triaging Suite
 // ==========================================
 EPFD_TEST(DsaSuite, InvestigationPriorityQueueOrdering) {
     InvestigationPriorityQueue pq;
@@ -128,7 +329,7 @@ EPFD_TEST(DsaSuite, InvestigationPriorityQueueOrdering) {
 }
 
 // ==========================================
-// 5. Fraud Ring Graph Suite
+// 12. Fraud DSA: Fraud Ring Graph Suite
 // ==========================================
 EPFD_TEST(DsaSuite, FraudRingGraphConnectedComponents) {
     FraudRingGraph graph;
@@ -151,15 +352,15 @@ EPFD_TEST(DsaSuite, FraudRingGraphConnectedComponents) {
     // BFS Component Discovery from CustA
     auto ring = graph.findConnectedComponent("CustA", 5);
     ASSERT_EQ(ring.size(), 6); // Entire connected component found!
-    ASSERT_TRUE(ring.find("CustA") != ring.end());
-    ASSERT_TRUE(ring.find("CustB") != ring.end());
-    ASSERT_TRUE(ring.find("CustC") != ring.end());
-    ASSERT_TRUE(ring.find("CustD") != ring.end());
-    ASSERT_TRUE(ring.find("Dev1") != ring.end());
+    ASSERT_TRUE(ring.contains("CustA"));
+    ASSERT_TRUE(ring.contains("CustB"));
+    ASSERT_TRUE(ring.contains("CustC"));
+    ASSERT_TRUE(ring.contains("CustD"));
+    ASSERT_TRUE(ring.contains("Dev1"));
 }
 
 // ==========================================
-// 6. Risk Ranking & Binary Search Suite
+// 13. Fraud DSA: Risk Ranking & Binary Search Suite
 // ==========================================
 EPFD_TEST(DsaSuite, RiskRankingAndBinarySearchTimeRange) {
     // 1. Risk sorting test
@@ -179,7 +380,7 @@ EPFD_TEST(DsaSuite, RiskRankingAndBinarySearchTimeRange) {
     Device dev("d", "f", "1.1.1.1");
     PaymentMethod pm("pm", PaymentType::CREDIT_CARD, "4111111111111111", "Name", 12, 2028);
 
-    std::vector<Transaction> history;
+    dsa::Vector<Transaction> history;
     history.emplace_back("tx_10", TransactionType::PURCHASE, "u", "m", "a", 10.0, "USD", t0 + 10s, loc, "1.1.1.1", dev, "m", pm);
     history.emplace_back("tx_20", TransactionType::PURCHASE, "u", "m", "a", 20.0, "USD", t0 + 20s, loc, "1.1.1.1", dev, "m", pm);
     history.emplace_back("tx_30", TransactionType::PURCHASE, "u", "m", "a", 30.0, "USD", t0 + 30s, loc, "1.1.1.1", dev, "m", pm);
