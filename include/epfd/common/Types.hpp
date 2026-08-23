@@ -60,6 +60,13 @@ enum class DecisionAction {
     BLOCK
 };
 
+enum class CustomerRiskTier {
+    NEW,
+    ESTABLISHED,
+    TRUSTED,
+    RESTRICTED
+};
+
 enum class FraudRuleCategory {
     VELOCITY,
     AMOUNT_DEVIATION,
@@ -104,6 +111,7 @@ std::string_view toString(TransactionStatus status);
 std::string_view toString(PaymentType type);
 std::string_view toString(RiskLevel level);
 std::string_view toString(DecisionAction action);
+std::string_view toString(CustomerRiskTier tier);
 std::string_view toString(FraudRuleCategory category);
 std::string_view toString(CaseStatus status);
 std::string_view toString(GroundTruthLabel label);
@@ -113,6 +121,7 @@ std::ostream& operator<<(std::ostream& os, TransactionStatus status);
 std::ostream& operator<<(std::ostream& os, PaymentType type);
 std::ostream& operator<<(std::ostream& os, RiskLevel level);
 std::ostream& operator<<(std::ostream& os, DecisionAction action);
+std::ostream& operator<<(std::ostream& os, CustomerRiskTier tier);
 std::ostream& operator<<(std::ostream& os, FraudRuleCategory category);
 std::ostream& operator<<(std::ostream& os, CaseStatus status);
 std::ostream& operator<<(std::ostream& os, GroundTruthLabel label);

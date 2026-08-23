@@ -62,6 +62,16 @@ std::string_view toString(DecisionAction action) {
     return "UNKNOWN";
 }
 
+std::string_view toString(CustomerRiskTier tier) {
+    switch (tier) {
+        case CustomerRiskTier::NEW:         return "NEW";
+        case CustomerRiskTier::ESTABLISHED: return "ESTABLISHED";
+        case CustomerRiskTier::TRUSTED:     return "TRUSTED";
+        case CustomerRiskTier::RESTRICTED:  return "RESTRICTED";
+    }
+    return "UNKNOWN";
+}
+
 std::string_view toString(FraudRuleCategory category) {
     switch (category) {
         case FraudRuleCategory::VELOCITY:          return "VELOCITY";
@@ -114,6 +124,10 @@ std::ostream& operator<<(std::ostream& os, RiskLevel level) {
 
 std::ostream& operator<<(std::ostream& os, DecisionAction action) {
     return os << toString(action);
+}
+
+std::ostream& operator<<(std::ostream& os, CustomerRiskTier tier) {
+    return os << toString(tier);
 }
 
 std::ostream& operator<<(std::ostream& os, FraudRuleCategory category) {

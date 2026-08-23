@@ -215,4 +215,234 @@ std::vector<Account> InMemoryAccountRepository::findByCustomerId(const std::stri
     return result;
 }
 
+// ==========================================
+// InMemoryFraudAlertRepository
+// ==========================================
+
+bool InMemoryFraudAlertRepository::save(const FraudAlert& entity) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_[entity.getAlertId()] = entity;
+    return true;
+}
+
+std::optional<FraudAlert> InMemoryFraudAlertRepository::findById(const std::string& id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = storage_.find(id);
+    if (it != storage_.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
+
+std::vector<FraudAlert> InMemoryFraudAlertRepository::findAll() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<FraudAlert> result;
+    result.reserve(storage_.size());
+    for (const auto& [_, alert] : storage_) {
+        result.push_back(alert);
+    }
+    return result;
+}
+
+bool InMemoryFraudAlertRepository::remove(const std::string& id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.erase(id) > 0;
+}
+
+size_t InMemoryFraudAlertRepository::count() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.size();
+}
+
+void InMemoryFraudAlertRepository::clear() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_.clear();
+}
+
+std::vector<FraudAlert> InMemoryFraudAlertRepository::findByTransactionId(const std::string& transaction_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<FraudAlert> result;
+    for (const auto& [_, alert] : storage_) {
+        if (alert.getTransactionId() == transaction_id) {
+            result.push_back(alert);
+        }
+    }
+    return result;
+}
+
+std::vector<FraudAlert> InMemoryFraudAlertRepository::findByRuleId(const std::string& rule_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<FraudAlert> result;
+    for (const auto& [_, alert] : storage_) {
+        if (alert.getRuleId() == rule_id) {
+            result.push_back(alert);
+        }
+    }
+    return result;
+}
+
+std::vector<FraudAlert> InMemoryFraudAlertRepository::findBySeverity(RiskLevel severity) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<FraudAlert> result;
+    for (const auto& [_, alert] : storage_) {
+        if (alert.getSeverity() == severity) {
+            result.push_back(alert);
+        }
+    }
+    return result;
+}
+
+// ==========================================
+// InMemoryFraudCaseRepository
+// ==========================================
+
+bool InMemoryFraudCaseRepository::save(const Dispute& entity) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_[entity.getDisputeId()] = entity;
+    return true;
+}
+
+std::optional<Dispute> InMemoryFraudCaseRepository::findById(const std::string& id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = storage_.find(id);
+    if (it != storage_.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
+
+std::vector<Dispute> InMemoryFraudCaseRepository::findAll() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Dispute> result;
+    result.reserve(storage_.size());
+    for (const auto& [_, dispute] : storage_) {
+        result.push_back(dispute);
+    }
+    return result;
+}
+
+bool InMemoryFraudCaseRepository::remove(const std::string& id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.erase(id) > 0;
+}
+
+size_t InMemoryFraudCaseRepository::count() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.size();
+}
+
+void InMemoryFraudCaseRepository::clear() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_.clear();
+}
+
+std::vector<Dispute> InMemoryFraudCaseRepository::findByTransactionId(const std::string& transaction_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Dispute> result;
+    for (const auto& [_, dispute] : storage_) {
+        if (dispute.getTransactionId() == transaction_id) {
+            result.push_back(dispute);
+        }
+    }
+    return result;
+}
+
+std::vector<Dispute> InMemoryFraudCaseRepository::findByCustomerId(const std::string& customer_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Dispute> result;
+    for (const auto& [_, dispute] : storage_) {
+        if (dispute.getCustomerId() == customer_id) {
+            result.push_back(dispute);
+        }
+    }
+    return result;
+}
+
+std::vector<Dispute> InMemoryFraudCaseRepository::findByStatus(CaseStatus status) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<Dispute> result;
+    for (const auto& [_, dispute] : storage_) {
+        if (dispute.getStatus() == status) {
+            result.push_back(dispute);
+        }
+    }
+    return result;
+}
+
+// ==========================================
+// InMemoryRiskAssessmentRepository
+// ==========================================
+
+bool InMemoryRiskAssessmentRepository::save(const RiskAssessment& entity) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_[entity.getAssessmentId()] = entity;
+    return true;
+}
+
+std::optional<RiskAssessment> InMemoryRiskAssessmentRepository::findById(const std::string& id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    auto it = storage_.find(id);
+    if (it != storage_.end()) {
+        return it->second;
+    }
+    return std::nullopt;
+}
+
+std::vector<RiskAssessment> InMemoryRiskAssessmentRepository::findAll() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<RiskAssessment> result;
+    result.reserve(storage_.size());
+    for (const auto& [_, asm_entity] : storage_) {
+        result.push_back(asm_entity);
+    }
+    return result;
+}
+
+bool InMemoryRiskAssessmentRepository::remove(const std::string& id) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.erase(id) > 0;
+}
+
+size_t InMemoryRiskAssessmentRepository::count() const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    return storage_.size();
+}
+
+void InMemoryRiskAssessmentRepository::clear() {
+    std::lock_guard<std::mutex> lock(mutex_);
+    storage_.clear();
+}
+
+std::optional<RiskAssessment> InMemoryRiskAssessmentRepository::findByTransactionId(const std::string& transaction_id) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    for (const auto& [_, asm_entity] : storage_) {
+        if (asm_entity.getTransactionId() == transaction_id) {
+            return asm_entity;
+        }
+    }
+    return std::nullopt;
+}
+
+std::vector<RiskAssessment> InMemoryRiskAssessmentRepository::findByRiskLevel(RiskLevel level) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<RiskAssessment> result;
+    for (const auto& [_, asm_entity] : storage_) {
+        if (asm_entity.getRiskLevel() == level) {
+            result.push_back(asm_entity);
+        }
+    }
+    return result;
+}
+
+std::vector<RiskAssessment> InMemoryRiskAssessmentRepository::findByDecision(DecisionAction decision) const {
+    std::lock_guard<std::mutex> lock(mutex_);
+    std::vector<RiskAssessment> result;
+    for (const auto& [_, asm_entity] : storage_) {
+        if (asm_entity.getDecision() == decision) {
+            result.push_back(asm_entity);
+        }
+    }
+    return result;
+}
+
 } // namespace epfd

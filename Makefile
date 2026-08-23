@@ -13,6 +13,8 @@ SRCS_CORE = src/common/Types.cpp \
             src/models/Dispute.cpp \
             src/models/Transaction.cpp \
             src/database/InMemoryRepositories.cpp \
+            src/database/FileRepositories.cpp \
+            src/database/AuditTrailLogger.cpp \
             src/dsa/TimeWindowBuffer.cpp \
             src/dsa/CustomerVelocityTracker.cpp \
             src/dsa/FastLookupIndex.cpp \
@@ -21,10 +23,16 @@ SRCS_CORE = src/common/Types.cpp \
             src/validation/TransactionValidator.cpp \
             src/features/FeatureExtractor.cpp \
             src/fraud/ConcreteFraudRules.cpp \
+            src/fraud/AdvancedFraudRules.cpp \
             src/fraud/FraudDetectorEngine.cpp \
+            src/ml/NativeMLModelPredictor.cpp \
             src/risk/RiskAggregator.cpp \
             src/risk/ConcreteRiskPolicies.cpp \
+            src/risk/CustomerRiskTierManager.cpp \
+            src/risk/PolicyChangeAuditManager.cpp \
             src/risk/RiskEngine.cpp \
+            src/decision/ConcreteDecisionPolicies.cpp \
+            src/decision/DecisionEngine.cpp \
             src/services/TransactionService.cpp
 
 SRCS_APP = src/main.cpp
@@ -36,7 +44,11 @@ SRCS_TEST = tests/main_test.cpp \
             tests/test_validation_and_services.cpp \
             tests/test_feature_engineering.cpp \
             tests/test_rule_based_fraud_detection.cpp \
-            tests/test_risk_management_engine.cpp
+            tests/test_risk_management_engine.cpp \
+            tests/test_decision_engine.cpp \
+            tests/test_persistence_and_repositories.cpp \
+            tests/test_advanced_fraud_rules_and_tiering.cpp \
+            tests/test_python_ml_pipeline.cpp
 
 BIN_DIR = bin
 

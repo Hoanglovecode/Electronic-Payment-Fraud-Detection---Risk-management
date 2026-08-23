@@ -200,10 +200,16 @@ BlacklistRule::BlacklistRule(std::shared_ptr<FastLookupIndex> lookup_index, doub
 std::optional<FraudAlert> BlacklistRule::evaluate(const Transaction& tx, const TransactionFeatures&) const {
     if (!enabled_ || !lookup_index_) return std::nullopt;
 
-    if (lookup_index_->isBlacklisted("IP:" + tx.getIpAddress()) ||
+    if (lookup_index_->isBlacklisted(tx.getIpAddress()) ||
+        lookup_index_->isBlacklisted("IP:" + tx.getIpAddress()) ||
+        lookup_index_->isBlacklisted(tx.getDevice().getDeviceFingerprint()) ||
         lookup_index_->isBlacklisted("DEV:" + tx.getDevice().getDeviceFingerprint()) ||
+        lookup_index_->isBlacklisted(tx.getPaymentMethod().getCardBin()) ||
         lookup_index_->isBlacklisted("CARD:" + tx.getPaymentMethod().getCardBin()) ||
-        lookup_index_->isBlacklisted("MERCHANT:" + tx.getMerchantId())) {
+        lookup_index_->isBlacklisted(tx.getMerchantId()) ||
+        lookup_index_->isBlacklisted("MERCHANT:" + tx.getMerchantId()) ||
+        lookup_index_->isBlacklisted(tx.getCustomerId()) ||
+        lookup_index_->isBlacklisted("CUST:" + tx.getCustomerId())) {
         
         std::string alert_id = "ALT_BLACKLIST_" + tx.getTransactionId();
         return FraudAlert(alert_id, tx.getTransactionId(), id_, name_, category_,
@@ -222,7 +228,9 @@ WhitelistRule::WhitelistRule(std::shared_ptr<FastLookupIndex> lookup_index, doub
 std::optional<FraudAlert> WhitelistRule::evaluate(const Transaction& tx, const TransactionFeatures&) const {
     if (!enabled_ || !lookup_index_) return std::nullopt;
 
-    if (lookup_index_->isWhitelisted("MERCHANT:" + tx.getMerchantId()) ||
+    if (lookup_index_->isWhitelisted(tx.getMerchantId()) ||
+        lookup_index_->isWhitelisted("MERCHANT:" + tx.getMerchantId()) ||
+        lookup_index_->isWhitelisted(tx.getCustomerId()) ||
         lookup_index_->isWhitelisted("CUST:" + tx.getCustomerId())) {
         
         std::string alert_id = "ALT_WHITELIST_" + tx.getTransactionId();

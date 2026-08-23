@@ -39,7 +39,12 @@
 #include "epfd/database/ITransactionRepository.hpp"
 #include "epfd/database/ICustomerRepository.hpp"
 #include "epfd/database/IAccountRepository.hpp"
+#include "epfd/database/IFraudAlertRepository.hpp"
+#include "epfd/database/IFraudCaseRepository.hpp"
+#include "epfd/database/IRiskAssessmentRepository.hpp"
 #include "epfd/database/InMemoryRepositories.hpp"
+#include "epfd/database/FileRepositories.hpp"
+#include "epfd/database/AuditTrailLogger.hpp"
 
 // Data Structures & Algorithms System Components (DSA)
 #include "epfd/dsa/TimeWindowBuffer.hpp"
@@ -53,17 +58,19 @@
 #include "epfd/features/TransactionFeatures.hpp"
 #include "epfd/features/FeatureExtractor.hpp"
 
-// Fraud Detection Layer (Rule-Based & Engine)
+// Fraud Detection Layer (Rule-Based & Advanced Engine)
 #include "epfd/fraud/IFraudRule.hpp"
 #include "epfd/fraud/IFraudDetector.hpp"
 #include "epfd/fraud/ConcreteFraudRules.hpp"
+#include "epfd/fraud/AdvancedFraudRules.hpp"
 #include "epfd/fraud/FraudDetectorEngine.hpp"
 
-// ML Predictor Abstractions
+// ML Predictor Abstractions & Native Inference Bridge
 #include "epfd/ml/IModelPredictor.hpp"
 #include "epfd/ml/MockModelPredictor.hpp"
+#include "epfd/ml/NativeMLModelPredictor.hpp"
 
-// Risk Management Layer
+// Risk Management & Customer Tiering Layer
 #include "epfd/risk/RiskFactor.hpp"
 #include "epfd/risk/RiskProfile.hpp"
 #include "epfd/risk/RiskWeights.hpp"
@@ -71,10 +78,14 @@
 #include "epfd/risk/IRiskRule.hpp"
 #include "epfd/risk/IRiskPolicy.hpp"
 #include "epfd/risk/ConcreteRiskPolicies.hpp"
+#include "epfd/risk/CustomerRiskTierManager.hpp"
+#include "epfd/risk/PolicyChangeAuditManager.hpp"
 #include "epfd/risk/RiskEngine.hpp"
 
 // Decision & Strategy Patterns (SOLID)
 #include "epfd/decision/IDecisionPolicy.hpp"
+#include "epfd/decision/ConcreteDecisionPolicies.hpp"
+#include "epfd/decision/DecisionEngine.hpp"
 #include "epfd/utils/Observer.hpp"
 
 // Services Layer
