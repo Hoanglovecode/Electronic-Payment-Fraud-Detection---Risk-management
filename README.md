@@ -3,7 +3,7 @@
 > **Kiến Trúc Lai Kết Hợp Nhân C++ Hiệu Năng Cao & Mô Hình Học Máy Đã Hiệu Chuẩn Xác Suất**  
 > Dự án mô phỏng cấp độ công nghiệp phục vụ việc phát hiện gian lận thanh toán thời gian thực, chấm điểm rủi ro đa nhân tố, tự động phân luồng quyết định, tuân thủ an toàn bảo mật chuẩn PCI-DSS và quy trình vòng lặp phản hồi (Feedback Loop).
 
-*Dự án được thiết kế và phát triển bởi các thành viên: Hoàng, Khiêm và Triết.*
+*Dự án được thiết kế và phát triển bởi 2 thành viên: Hoàng và Khiêm.*
 
 ---
 
@@ -103,6 +103,7 @@ Khám phá toàn bộ tài liệu kiến trúc kỹ thuật trong thư mục [`d
 ## ⚡ Hướng Dẫn Cài Đặt & Biên Dịch Dự Án
 
 ### Yêu Cầu Môi Trường
+
 - **Trình biên dịch C++**: GCC 9+ / Clang 10+ / MinGW-w64 (Hỗ trợ chuẩn **C++17**)
 - **Hệ thống Build**: `CMake` 3.15+ hoặc `MinGW-Make`
 - **Python**: Python 3.8+ (Dành cho việc chạy script ML offline nếu cần)
@@ -149,7 +150,8 @@ cmake --build .
 ctest --output-on-failure
 ```
 
-#### Biên dịch Giao diện Đồ họa Desktop GUI (C++ / Qt):
+#### Biên dịch Giao diện Đồ họa Desktop GUI (C++ / Qt)
+
 Nếu máy tính của bạn đã cài đặt **Qt 5 hoặc Qt 6 MinGW**, hãy truyền đường dẫn `CMAKE_PREFIX_PATH`:
 
 ```bash
