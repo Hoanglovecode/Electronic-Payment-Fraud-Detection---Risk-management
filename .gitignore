@@ -16,10 +16,15 @@ CMakeCache.txt
 cmake_install.cmake
 *.ninja
 
-# IDE and OS files
-.vscode/
-.idea/
-.DS_Store
-Thumbs.db
-*.swp
-*.bak
+# Python cache
+__pycache__/
+*.pyc
+
+# Runtime logs and test exports
+*.log
+demo_labeled_export.csv
+test_labeled_export.csv
+test_e2e_labeled_export.csv
+test_audit_trail.log
+demo_audit_trail.log
+

@@ -1,33 +1,36 @@
 # 17 — Transaction Simulation, Resilience & Security Basics
 
-## TransactionSimulator
-Generate synthetic sequential transactions for demos and rule testing.
+## Purpose
+Generate synthetic live transaction streams for testing real-world fraud scenarios and enforce strict PCI-DSS data masking standards across all logs, repositories, and UI layers.
 
-Parameters:
-- frequency
-- amount range
-- normal/suspicious pattern
-- device behavior
-- location behavior
+---
 
-This is separate from the training dataset.
+## 1. Synthetic Transaction Stream Generator (`TransactionSimulator`)
 
-## Data masking
-Never log full sensitive payment data.
+The `TransactionSimulator` generates high-fidelity synthetic transactions on live domain entities (`Transaction`, `Customer`, `Device`, `PaymentMethod`, `Location`).
 
-Example:
-```text
-PAN: **** **** **** 1234
-```
+### Supported Fraud & Traffic Scenarios:
+1. **`NORMAL_LEGITIMATE`**: Standard purchases ($10 - $500) distributed across trusted local merchants.
+2. **`BURST_VELOCITY_ATTACK`**: Rapid-fire velocity transactions ($250 - $800) triggering velocity threshold rules.
+3. **`IMPOSSIBLE_TRAVEL_ATTACK`**: Multi-country cross-border purchases (Hanoi $\to$ Paris in minutes, speed $> 5000\text{ km/h}$).
+4. **`CARD_TESTING_ATTACK`**: Micro-transactions ($1.00 - $4.50) probing card validity.
+5. **`MULE_SMURFING_ATTACK`**: Structured transfers ($8,500 - $9,850) deliberately placed below AML $10,000 threshold.
+6. **`ACCOUNT_TAKEOVER_ATTACK`**: Transactions initiated from rooted/jailbroken emulator devices with new foreign IPs.
+7. **`MIXED_REALISTIC_TRAFFIC`**: Continuous realistic stream with configurable fraud ratio (e.g. 2.5% - 5.0% attack injections).
 
-Never log CVV.
+---
 
-## Resilience
-Explicitly test failures around ModelPredictor, repository/database and configuration.
+## 2. PCI-DSS Data Masking & Security (`SecurityUtils`)
 
-Important policy:
-- ML timeout behavior
-- invalid prediction behavior
-- unavailable dependency behavior
+Strict data protection standards implemented:
+- **PAN Masking**: Primary Account Numbers masked leaving only last 4 digits (`**** **** **** 1234`) or BIN + last 4 (`4111 11** **** 1234`).
+- **CVV/CVC Elimination**: Complete redaction of security codes from any log payload (`CVV: [REDACTED]`).
+- **PII Privacy**: Email anonymization (`n***a@domain.com`) and IP address truncation (`192.168.*.*`).
 
-These policies require human approval when they affect transaction safety.
+---
+
+## 3. Resilience & Failure Policies
+Explicit failure policies defined and tested:
+- **ML Timeout Behavior**: SLA clock $> 50\text{ms}$ automatically triggers fallback.
+- **Repository/Database Outage**: Graceful in-memory buffer handling with fallback alerting.
+- **Audit Logging**: Zero bypasses; all policy fallbacks logged to append-only audit trail.

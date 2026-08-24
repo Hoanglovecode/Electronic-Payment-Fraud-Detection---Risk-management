@@ -26,6 +26,8 @@ SRCS_CORE = src/common/Types.cpp \
             src/fraud/AdvancedFraudRules.cpp \
             src/fraud/FraudDetectorEngine.cpp \
             src/ml/NativeMLModelPredictor.cpp \
+            src/ml/MLResilienceManager.cpp \
+            src/ml/MLModelRegistry.cpp \
             src/risk/RiskAggregator.cpp \
             src/risk/ConcreteRiskPolicies.cpp \
             src/risk/CustomerRiskTierManager.cpp \
@@ -33,6 +35,12 @@ SRCS_CORE = src/common/Types.cpp \
             src/risk/RiskEngine.cpp \
             src/decision/ConcreteDecisionPolicies.cpp \
             src/decision/DecisionEngine.cpp \
+            src/utils/SecurityUtils.cpp \
+            src/feedback/ReviewCase.cpp \
+            src/feedback/OutcomeTracker.cpp \
+            src/feedback/LabelStore.cpp \
+            src/feedback/CaseManager.cpp \
+            src/simulation/TransactionSimulator.cpp \
             src/services/TransactionService.cpp
 
 SRCS_APP = src/main.cpp
@@ -48,7 +56,13 @@ SRCS_TEST = tests/main_test.cpp \
             tests/test_decision_engine.cpp \
             tests/test_persistence_and_repositories.cpp \
             tests/test_advanced_fraud_rules_and_tiering.cpp \
-            tests/test_python_ml_pipeline.cpp
+            tests/test_python_ml_pipeline.cpp \
+            tests/test_dataset_leakage_and_calibration.cpp \
+            tests/test_ml_cpp_integration.cpp \
+            tests/test_feedback_loop_case_management.cpp \
+            tests/test_simulation_security_and_masking.cpp \
+            tests/test_end_to_end_pipeline.cpp \
+            tests/test_performance_and_benchmarks.cpp
 
 BIN_DIR = bin
 

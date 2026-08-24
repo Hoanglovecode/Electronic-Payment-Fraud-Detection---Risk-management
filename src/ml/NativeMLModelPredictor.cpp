@@ -8,25 +8,29 @@ namespace epfd {
 
 NativeMLModelPredictor::NativeMLModelPredictor(std::string model_json_path)
     : model_path_(std::move(model_json_path)) {
-    // Initialize with default trained weights from Python Pipeline
+    // Default fallback weights
     means_ = {
-        123.81, 11.79, 3.05, 0.28, 0.40, 2.56, 358.38, 1.18, 0.13,
-        1.76, 0.06, 128.39, 39.01, 6.68, 0.09, 0.59, 0.10, 7.47
+        143.06, 11.78, 0.28, 0.13, 238.77, 0.48, 555.94, 2.39, 476.51,
+        47.81, 1.22, 0.12, 0.03, 1.52, 0.05, 116.58, 39.33, 0.07
     };
     scales_ = {
-        589.82, 4.91, 1.99, 0.45, 0.93, 2.18, 3209.87, 1.23, 0.34,
-        1.03, 0.25, 780.77, 242.25, 11.27, 0.29, 0.49, 0.51, 10.17
+        710.98, 4.92, 0.45, 0.61, 2786.88, 1.29, 6084.07, 2.35, 4137.98,
+        59.75, 1.44, 0.32, 0.16, 0.86, 0.22, 715.84, 242.72, 0.26
     };
     weights_ = {
-        0.0841, -0.0558, 0.0213, 0.0277, 0.4256, 0.4242, 0.0871, 0.5791, 0.2621,
-        0.3851, 0.2091, 0.4754, 0.4635, 0.6018, 0.1934, -0.1299, 0.4278, 0.6756
+        0.1575, -0.0125, -0.0820, 0.4969, 0.0891, 0.6002, 0.1075, 0.4916, 0.1330,
+        0.0641, 0.7604, 0.2021, 0.3219, 0.5025, 0.3127, 0.7189, 0.5845, 0.2504
     };
-    intercept_ = -8.779;
+    intercept_ = -8.628;
     optimal_threshold_ = 0.50;
     is_loaded_ = true;
 
-    // Try loading exact file if exists
-    loadModelFromJson(model_path_);
+    // Try loading exact file or search relative paths
+    if (!loadModelFromJson(model_path_)) {
+        if (!loadModelFromJson("../" + model_path_)) {
+            loadModelFromJson("../../" + model_path_);
+        }
+    }
 }
 
 bool NativeMLModelPredictor::loadModelFromJson(const std::string& json_path) {

@@ -61,7 +61,7 @@ EPFD_TEST(PersistenceSuite, InMemoryAlertAndCaseRepositories) {
 // 2. Persistent FileTransactionRepository Suite
 // ==========================================
 EPFD_TEST(PersistenceSuite, FileTransactionRepositoryPersistenceAndReload) {
-    const std::string test_csv = "bin/test_repo_transactions.csv";
+    const std::string test_csv = "test_repo_transactions.csv";
     std::remove(test_csv.c_str()); // Clean start
 
     Location loc(21.0285, 105.8542, "Hanoi", "Vietnam");
@@ -113,7 +113,7 @@ EPFD_TEST(PersistenceSuite, FileTransactionRepositoryPersistenceAndReload) {
 // 3. AuditTrailLogger Suite
 // ==========================================
 EPFD_TEST(PersistenceSuite, AuditTrailLoggerCompliance) {
-    const std::string audit_log = "bin/test_audit_trail.log";
+    const std::string audit_log = "test_audit_trail.log";
     std::remove(audit_log.c_str());
 
     {

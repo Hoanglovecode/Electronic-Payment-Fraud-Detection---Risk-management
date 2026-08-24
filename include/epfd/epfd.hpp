@@ -65,10 +65,12 @@
 #include "epfd/fraud/AdvancedFraudRules.hpp"
 #include "epfd/fraud/FraudDetectorEngine.hpp"
 
-// ML Predictor Abstractions & Native Inference Bridge
+// ML Predictor Abstractions, Native Inference & Resilience Manager
 #include "epfd/ml/IModelPredictor.hpp"
 #include "epfd/ml/MockModelPredictor.hpp"
 #include "epfd/ml/NativeMLModelPredictor.hpp"
+#include "epfd/ml/MLResilienceManager.hpp"
+#include "epfd/ml/MLModelRegistry.hpp"
 
 // Risk Management & Customer Tiering Layer
 #include "epfd/risk/RiskFactor.hpp"
@@ -87,6 +89,17 @@
 #include "epfd/decision/ConcreteDecisionPolicies.hpp"
 #include "epfd/decision/DecisionEngine.hpp"
 #include "epfd/utils/Observer.hpp"
+#include "epfd/utils/SecurityUtils.hpp"
+#include "epfd/utils/BenchmarkTimer.hpp"
+
+// Feedback Loop & Case Management
+#include "epfd/feedback/ReviewCase.hpp"
+#include "epfd/feedback/OutcomeTracker.hpp"
+#include "epfd/feedback/LabelStore.hpp"
+#include "epfd/feedback/CaseManager.hpp"
+
+// Simulation & Real-time Stream Generation
+#include "epfd/simulation/TransactionSimulator.hpp"
 
 // Services Layer
 #include "epfd/services/TransactionService.hpp"

@@ -21,6 +21,7 @@ file(GLOB_RECURSE EPFD_CORE_SRCS
     "src/ml/*.cpp"
     "src/feedback/*.cpp"
     "src/database/*.cpp"
+    "src/simulation/*.cpp"
     "src/services/*.cpp"
     "src/utils/*.cpp"
 )
