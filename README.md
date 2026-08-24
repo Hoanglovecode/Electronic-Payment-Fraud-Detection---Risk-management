@@ -122,13 +122,21 @@ mingw32-make
 mingw32-make test
 ```
 
-### Alternatively with CMake
+### Alternatively with CMake (Console & Qt Desktop GUI)
 ```bash
 mkdir build && cd build
+
+# Configure standard console & tests
 cmake ..
 cmake --build .
 ctest --output-on-failure
 ./epfd_app.exe
+
+# To build the C++/Qt Desktop GUI (epfd_gui):
+# Pass your Qt installation directory (e.g. Qt 6 or Qt 5 for MinGW):
+cmake -DCMAKE_PREFIX_PATH="C:/Qt/6.5.0/mingw_64" ..
+cmake --build .
+./epfd_gui.exe
 ```
 
 ---
