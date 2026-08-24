@@ -1,44 +1,45 @@
-# EPFD-RAS — Electronic Payment Fraud Detection & Risk Management System
+# EPFD-RAS — Hệ Thống Phát Hiện Gian Lận & Quản Trị Rủi Ro Thanh Toán Điện Tử
 
-> **High-Performance C++ Core & Calibrated Machine Learning Hybrid Architecture**  
-> An educational, production-grade platform for real-time payment fraud detection, multi-factor risk scoring, automated decision routing, PCI-DSS security compliance, and continuous feedback loop.
+> **Kiến Trúc Lai Kết Hợp Nhân C++ Hiệu Năng Cao & Mô Hình Học Máy Đã Hiệu Chuẩn Xác Suất**  
+> Dự án mô phỏng cấp độ công nghiệp phục vụ việc phát hiện gian lận thanh toán thời gian thực, chấm điểm rủi ro đa nhân tố, tự động phân luồng quyết định, tuân thủ an toàn bảo mật chuẩn PCI-DSS và quy trình vòng lặp phản hồi (Feedback Loop).
 
-*Project created and developed by team members: Hoang, Khiem, and Triet.*
-
----
-
-## 🚀 Key Highlights & Architectural Strengths
-
-- **Ultra-High Throughput & Low Latency**: Processes **$165,000+\text{ TPS}$** with a mean latency of **$6.06\mu\text{s}$** and P99 tail latency under **$26\mu\text{s}$**.
-- **100% Handcrafted Custom DSA**: Custom implementations of `Vector`, `Deque`, `LinkedList`, `HashMap`, `HashSet`, `PriorityQueue`, `TimeWindowBuffer`, and `FraudRingGraph` delivering up to **$109\times$ algorithmic speedups** over naive iterations.
-- **Explainable Multi-Factor Risk Engine**: Translates 12 deterministic fraud rules + calibrated ML probabilities + customer KYC risk tiers into human-interpretable risk scores ($0 - 100$).
-- **Rigorous Zero-Leakage ML & Calibration**: Offline temporal splitting ($0.0$ future leakage), near-zero calibration error ($\text{ECE} = 0.028\%$, $\text{Brier} = 0.000022$), and sub-millisecond C++ native inference.
-- **Enterprise Case Management & Feedback Loop**: Analyst investigation workbench (`ReviewCase`), real-world outcome tracking (`OutcomeTracker`), and automatic ground-truth label generation (`LabelStore`).
-- **PCI-DSS Compliance & Security**: Automatic PAN masking (`4111 11** **** 1234`), complete CVV redaction (`[REDACTED]`), and immutable cryptographic audit logging.
+*Dự án được thiết kế và phát triển bởi các thành viên: Hoàng, Khiêm và Triết.*
 
 ---
 
-## 🏗️ End-to-End System Architecture
+## 🚀 Các Điểm Nổi Bật & Thế Mạnh Kiến Trúc
+
+- **Thông Lượng Cực Cao & Độ Trễ Cực Thấp**: Đạt thông lượng xử lý **$165,000+\text{ TPS}$**, độ trễ trung bình chỉ **$6.06\mu\text{s}$ ($0.006\text{ms}$)** và phân vị độ trễ P99 dưới **$26\mu\text{s}$**.
+- **100% Cấu Trúc Dữ Liệu Tự Viết Tay (Custom DSA)**: Hiện thực từ đầu các cấu trúc dữ liệu `Vector`, `Deque`, `LinkedList`, `HashMap`, `HashSet`, `PriorityQueue`, `TimeWindowBuffer`, và `FraudRingGraph`, mang lại tốc độ tăng tốc thuật toán lên đến **$109\times$** so với cách quét tuần tự ngây thơ.
+- **Động Cơ Chấm Điểm Rủi Ro Đa Nhân Tố & Có Khả Năng Giải Thích (Explainable Risk Engine)**: Tổng hợp 12 luật gian lận tất định + xác suất học máy đã hiệu chuẩn + phân tầng khách hàng KYC thành điểm rủi ro trực quan ($0 - 100$).
+- **Quy Trình ML Nghiêm Ngặt & Không Rò Rỉ Dữ Liệu Tương Lai (Zero-Leakage)**: Phân chia tập dữ liệu theo dòng thời gian ($0.0$ rò rỉ), sai số hiệu chuẩn xác suất cực thấp ($\text{ECE} = 0.028\%$, $\text{Brier} = 0.000022$), suy luận trực tiếp trong C++ cấp microsecond.
+- **Quản Lý Hồ Sơ Điều Tra & Vòng Lặp Phản Hồi (Case Management & Feedback Loop)**: Bàn làm việc điều tra viên (`ReviewCase`), ghi nhận biến cố thực tế như Chargeback (`OutcomeTracker`) và tự động lưu trữ/xuất nhãn Ground Truth (`LabelStore`).
+- **Tuân Thủ Chuẩn Bảo Mật Thanh Toán PCI-DSS**: Tự động che số thẻ PAN (`4111 11** **** 1234`), loại bỏ hoàn toàn mã CVV (`[REDACTED]`) và ghi nhật ký kiểm toán bất biến.
+- **Hỗ Trợ Giao Diện Kép**: Bao gồm Console Showcase tương tác và Giao diện Desktop GUI đồ họa hiện đại (**C++ / Qt / CMake / MinGW**).
+
+---
+
+## 🏗️ Kiến Trúc Luồng Dữ Liệu Toàn Hệ Thống
 
 ```mermaid
 graph TD
-    A[Incoming Payment Event] --> B[TransactionValidator]
-    B -->|Check Schema, Luhn, Balance| C[TransactionService]
+    A[Sự Kiện Thanh Toán Đến] --> B[TransactionValidator]
+    B -->|Kiểm Tra Schema, Luhn, Số Dư| C[TransactionService]
     C --> D[FeatureExtractor]
-    D -->|18-D Feature Vector| E[Rule Engine: 12 Fraud Rules]
-    D -->|Calibrated Feature Inputs| F[Native ML Model Predictor]
-    E -->|Triggered Alerts| G[RiskEngine]
-    F -->|Fraud Probability| G
-    G -->|Composite Risk Score 0-100| H[DecisionEngine]
-    H -->|APPROVE / REVIEW / CHALLENGE / BLOCK| I[Repository Persistence & Audit Logs]
-    H -->|CHALLENGE or BLOCK| J[ReviewCase Analyst Queue]
+    D -->|Vector Đặc Trưng 18 Chiều| E[Bộ 12 Luật Gian Lận Tất Định]
+    D -->|Đặc Trưng Đầu Vào Đã Chuẩn Hóa| F[Native ML Model Predictor]
+    E -->|Cảnh Báo Vi Phạm Luật| G[RiskEngine]
+    F -->|Xác Suất Gian Lận ML| G
+    G -->|Điểm Rủi Ro Tổng Hợp 0-100| H[DecisionEngine]
+    H -->|APPROVE / REVIEW / CHALLENGE / BLOCK| I[Lưu Trữ Repository & Nhật Ký Kiểm Toán]
+    H -->|CHALLENGE hoặc BLOCK| J[Hàng Đợi Hồ Sơ Điều Tra ReviewCase]
     J --> K[OutcomeTracker & LabelStore]
-    K -->|Export Verified CSV Dataset| L[Python ML Retraining Pipeline]
+    K -->|Xuất Tập Dữ Liệu CSV Đã Kiểm Chứng| L[Python ML Tái Huấn Luyện]
 ```
 
 ---
 
-## 📊 Live Interactive Console Demo Showcase
+## 📊 Kết Quả Thực Nghiệm Trên Ứng Dụng Console Demo
 
 ```text
 ================================================================================
@@ -48,95 +49,126 @@ graph TD
 
 >>> RUNNING COMPLETE END-TO-END AUTOMATED SHOWCASE (PHASES 1-20) <<<
 
-[SCENARIO 1] Ingesting Normal Legitimate Transaction (Alice - $45.00 Grocery Purchase)
-  - Masked Card: 411111******1234
-  - Risk Score:  2.5/100 (VERY_LOW)
-  - Decision:    APPROVE [SUCCESS]
-  - Acc Balance: $1455.0 (Deducted $45.00)
+[SCENARIO 1] Tiếp nhận giao dịch hợp lệ (Alice - Mua hàng tạp hóa $45.00)
+  - Số thẻ che chuẩn PCI-DSS: 411111******1234
+  - Điểm rủi ro:               2.5/100 (VERY_LOW)
+  - Quyết định:               APPROVE [THÀNH CÔNG]
+  - Số dư tài khoản:          $1455.0 (Đã trừ $45.00)
 
-[SCENARIO 2] Ingesting High-Risk Attack Transaction (Bob - $4,200.00 Crypto Purchase from Paris)
-  - Masked Card: 510510******5100
-  - Risk Score:  98.0/100 (CRITICAL)
-  - Decision:    BLOCK [BLOCKED / DECLINED]
-  - Acc Balance: $8000.0 (Protected - No deduction)
+[SCENARIO 2] Tiếp nhận đợt tấn công gian lận cao (Bob - Mua tiền ảo $4,200.00 từ Paris)
+  - Số thẻ che chuẩn PCI-DSS: 510510******5100
+  - Điểm rủi ro:               98.0/100 (CRITICAL)
+  - Quyết định:               BLOCK [CHẶN GIAO DỊCH]
+  - Số dư tài khoản:          $8000.0 (Được bảo vệ an toàn - Không trừ tiền)
 
-[EXPLAINABILITY] Why was Transaction tx_attack_202 Blocked?
-  - Blacklisted IP Threat:        +40.0 pts (Rule: BlacklistRule)
-  - Rooted Emulator Environment:  +25.0 pts (Rule: DeviceRiskRule)
-  - Impossible Travel Velocity:   +20.0 pts (Rule: ImpossibleTravelRule)
-  - Machine Learning Model Score: 96.0% Fraud Probability (+30.0 pts)
-  - Composite Risk Assessment:    95.0/100 -> Action: BLOCK
+[EXPLAINABILITY] Tại sao giao dịch tx_attack_202 bị Chặn (BLOCK)?
+  - Cảnh báo IP Blacklist:                +40.0 điểm (Rule: BlacklistRule)
+  - Môi trường giả lập / Rooted:          +25.0 điểm (Rule: DeviceRiskRule)
+  - Vận tốc di chuyển bất khả thi (5000km/h): +20.0 điểm (Rule: ImpossibleTravelRule)
+  - Xác suất gian lận từ Mô hình ML:      96.0% Fraud Probability (+30.0 điểm)
+  - Đánh giá điểm rủi ro tổng hợp:       95.0/100 -> Hành động: BLOCK
 
-[FEEDBACK LOOP] Analyst Investigation & Ground Truth Generation
-  - Created Review Case: CASE_000001 (Status: OPEN)
-  - Case Resolution: RESOLVED_CONFIRMED_FRAUD (Assigned to: analyst_sarah)
-  - Outcome Recorded: Chargeback received ($4,200.00 loss mitigated)
-  - LabelStore: Verified Ground Truth label stored & exported to demo_labeled_export.csv
+[FEEDBACK LOOP] Điều tra viên xử lý & Cập nhật nhãn Ground Truth
+  - Khởi tạo hồ sơ điều tra: CASE_000001 (Trạng thái: OPEN)
+  - Kết luận điều tra:       RESOLVED_CONFIRMED_FRAUD (Phân công: analyst_sarah)
+  - Ghi nhận biến cố:        Đã nhận Chargeback (Thu hồi thiệt hại $4,200.00)
+  - LabelStore:              Đã ghi nhãn Ground Truth & xuất file demo_labeled_export.csv
 
-[PERFORMANCE & BENCHMARKS] High-Throughput Engine Benchmark (1,000 Transactions)
-  - Throughput:    165,150.04 TPS
-  - Mean Latency:  6.06 us (0.01 ms)
-  - P50 (Median):  4.30 us
-  - P95 Latency:   12.00 us
-  - P99 Latency:   25.80 us
+[PERFORMANCE & BENCHMARKS] Đo lường hiệu năng động cơ C++ (1,000 Giao dịch)
+  - Thông lượng (Throughput): 165,150.04 TPS
+  - Độ trễ trung bình:        6.06 us (0.01 ms)
+  - Trung vị P50:            4.30 us
+  - Phân vị P95:             12.00 us
+  - Phân vị P99 (Độ trễ đuôi): 25.80 us
 ```
 
 ---
 
-## 📚 Technical Documentation Suite
+## 📚 Bộ Tài Liệu Kỹ Thuật Chi Tiết
 
-Explore the comprehensive engineering documentation:
+Khám phá toàn bộ tài liệu kiến trúc kỹ thuật trong thư mục [`docs/`](file:///d:/ProjectOOP/docs):
 
-| Document | Description |
+| Tài Liệu | Mô Tả Nội Dung |
 | :--- | :--- |
-| 📖 [ARCHITECTURE.md](file:///d:/ProjectOOP/docs/ARCHITECTURE.md) | High-level system architecture, data flow diagrams, zero-copy memory model, thread safety. |
-| 🧩 [DESIGN.md](file:///d:/ProjectOOP/docs/DESIGN.md) | OOP design patterns (Strategy, Observer, Composite, State Machine) & Custom DSA library. |
-| 🤖 [ML_PIPELINE.md](file:///d:/ProjectOOP/docs/ML_PIPELINE.md) | Python ML training, probability calibration, 18-D feature space, C++ native predictor resilience. |
-| ⚖️ [RISK_MODEL.md](file:///d:/ProjectOOP/docs/RISK_MODEL.md) | Multi-factor risk scoring equations, customer risk tier offsets, and 4-Eyes policy governance. |
-| 🔌 [API.md](file:///d:/ProjectOOP/docs/API.md) | Complete C++ API Reference and class interfaces with code examples. |
-| 🧪 [TESTING.md](file:///d:/ProjectOOP/docs/TESTING.md) | Complete 92-test matrix, ML health audits, and empirical benchmark results. |
-| 📑 [00_MASTER_INDEX.md](file:///d:/ProjectOOP/docs/00_MASTER_INDEX.md) | 20-Phase Master Implementation Roadmap from Phase 1 to Phase 20. |
+| 📖 [ARCHITECTURE.md](file:///d:/ProjectOOP/docs/ARCHITECTURE.md) | Kiến trúc phân tầng, luồng dữ liệu 6 bước, mô hình bộ nhớ Zero-Copy, an toàn luồng. |
+| 🧩 [DESIGN.md](file:///d:/ProjectOOP/docs/DESIGN.md) | Các mẫu thiết kế GoF (Strategy, Observer, Composite, State Machine) & Thư viện Custom DSA. |
+| 🤖 [ML_PIPELINE.md](file:///d:/ProjectOOP/docs/ML_PIPELINE.md) | Quy trình huấn luyện Python ML, hiệu chuẩn xác suất, 18 đặc trưng, khả năng chống chịu lỗi (Circuit Breaker). |
+| ⚖️ [RISK_MODEL.md](file:///d:/ProjectOOP/docs/RISK_MODEL.md) | Công thức chấm điểm rủi ro đa nhân tố, độ lệch phân tầng KYC khách hàng và quản trị 4-Mắt. |
+| 🔌 [API.md](file:///d:/ProjectOOP/docs/API.md) | Hướng dẫn sử dụng API C++ và giao diện các lớp chính kèm ví dụ code mẫu. |
+| 🧪 [TESTING.md](file:///d:/ProjectOOP/docs/TESTING.md) | Ma trận 92 bài test tự động, kiểm toán ML không rò rỉ dữ liệu và kết quả benchmark thực nghiệm. |
+| 📑 [00_MASTER_INDEX.md](file:///d:/ProjectOOP/docs/00_MASTER_INDEX.md) | Lộ trình tổng thể 20 Phase từ Phase 1 đến Phase 20 (Đã hoàn thành 100%). |
 
 ---
 
-## ⚡ Quick Start & Build Instructions
+## ⚡ Hướng Dẫn Cài Đặt & Biên Dịch Dự Án
 
-### Prerequisites
-- **C++ Compiler**: GCC 9+ / Clang 10+ / MSVC (Supporting C++17)
-- **Build System**: `CMake` 3.15+ or `MinGW-Make`
-- **Python**: Python 3.8+ (for offline ML scripts)
+### Yêu Cầu Môi Trường
+- **Trình biên dịch C++**: GCC 9+ / Clang 10+ / MinGW-w64 (Hỗ trợ chuẩn **C++17**)
+- **Hệ thống Build**: `CMake` 3.15+ hoặc `MinGW-Make`
+- **Python**: Python 3.8+ (Dành cho việc chạy script ML offline nếu cần)
+- *(Tùy chọn)* **Qt Framework**: Qt 5 hoặc Qt 6 (Dành cho ứng dụng Desktop GUI đồ họa)
 
-### Building and Running
+---
+
+### Cách 1: Biên Dịch Bằng `mingw32-make` (Đơn giản nhất trên Windows)
+
 ```bash
-# 1. Clone the repository
+# 1. Clone repository về máy
 git clone https://github.com/Hoanglovecode/Electronic-Payment-Fraud-Detection---Risk-management.git
 cd Electronic-Payment-Fraud-Detection---Risk-management
 
-# 2. Build via MinGW Makefile
+# 2. Biên dịch toàn bộ ứng dụng console và test suite
 mingw32-make
 
-# 3. Run the interactive live demo application
+# 3. Khởi chạy ứng dụng Console Showcase
 ./bin/epfd_app.exe
 
-# 4. Run the comprehensive test suite (92 tests)
+# 4. Chạy toàn bộ 92 bài test kiểm thử tự động
 mingw32-make test
-```
-
-### Alternatively with CMake
-```bash
-mkdir build && cd build
-cmake ..
-cmake --build .
-ctest --output-on-failure
-./epfd_app.exe
 ```
 
 ---
 
-## 🧪 Test Matrix Status
+### Cách 2: Biên Dịch Bằng `CMake` (Console & Giao Diện Qt Desktop GUI)
 
-| Category | Suite Count | Tests Passed | Pass Rate | Execution Time |
+```bash
+# Tạo và chuyển vào thư mục build
+mkdir build
+cd build
+
+# Cấu hình CMake cơ bản
+cmake ..
+
+# Biên dịch ứng dụng console và test suite
+cmake --build .
+
+# Khởi chạy ứng dụng Console
+./epfd_app.exe
+
+# Chạy kiểm thử tự động
+ctest --output-on-failure
+```
+
+#### Biên dịch Giao diện Đồ họa Desktop GUI (C++ / Qt):
+Nếu máy tính của bạn đã cài đặt **Qt 5 hoặc Qt 6 MinGW**, hãy truyền đường dẫn `CMAKE_PREFIX_PATH`:
+
+```bash
+# Cấu hình CMake trỏ tới thư mục Qt trên máy của bạn
+cmake -DCMAKE_PREFIX_PATH="C:/Qt/6.5.0/mingw_64" ..
+
+# Tiến hành build target epfd_gui
+cmake --build .
+
+# Khởi chạy ứng dụng Desktop GUI
+./epfd_gui.exe
+```
+
+---
+
+## 🧪 Ma Trận Kết Quả Kiểm Thử (100% Pass)
+
+| Phân Loại Kiểm Thử | Số Lượng Suite | Số Tests Đạt | Tỷ Lệ Đạt | Thời Gian Chạy |
 | :--- | :---: | :---: | :---: | :---: |
-| **C++ Core Engine** | 18 Suites | 92 / 92 | **100%** | **~26.0 ms** |
-| **Python ML Audit** | 5 Suites | 5 / 5 | **100%** | **~1.2 s** |
-| **Total Validation** | **23 Suites** | **97 / 97** | **100%** | **PASSED** |
+| **C++ Core Engine Suite** | 18 Suites | 92 / 92 | **100%** | **~26.0 ms** |
+| **Python ML Quality Audit** | 5 Suites | 5 / 5 | **100%** | **~1.2 s** |
+| **Tổng Cộng Kiểm Thử** | **23 Suites** | **97 / 97** | **100%** | **PASSED (HOÀN HẢO)** |
