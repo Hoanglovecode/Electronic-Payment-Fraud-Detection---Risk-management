@@ -102,7 +102,7 @@ void MainWindow::onProcessSingleTransaction(const Transaction& tx) {
     }
 
     auto feat = extractor_->extract(tx);
-    auto risk = risk_engine_->assessRisk(tx);
+    auto risk = risk_engine_->assess(tx);
     auto decision = decision_engine_->evaluate(tx);
     service_->processTransaction(tx);
 
@@ -125,6 +125,19 @@ void MainWindow::onProcessSingleTransaction(const Transaction& tx) {
     updateKpiBanner();
 }
 
+static QString scenarioToString(SimulationScenario s) {
+    switch (s) {
+        case SimulationScenario::NORMAL_LEGITIMATE: return "NORMAL_LEGITIMATE";
+        case SimulationScenario::BURST_VELOCITY_ATTACK: return "BURST_VELOCITY_ATTACK";
+        case SimulationScenario::IMPOSSIBLE_TRAVEL_ATTACK: return "IMPOSSIBLE_TRAVEL_ATTACK";
+        case SimulationScenario::CARD_TESTING_ATTACK: return "CARD_TESTING_ATTACK";
+        case SimulationScenario::MULE_SMURFING_ATTACK: return "MULE_SMURFING_ATTACK";
+        case SimulationScenario::ACCOUNT_TAKEOVER_ATTACK: return "ACCOUNT_TAKEOVER_ATTACK";
+        case SimulationScenario::MIXED_REALISTIC_TRAFFIC: return "MIXED_REALISTIC_TRAFFIC";
+    }
+    return "UNKNOWN";
+}
+
 void MainWindow::onTriggerScenarioBatch(SimulationScenario scenario, size_t count) {
     auto batch = simulator_.generateBatch(count, scenario);
     for (const auto& tx : batch) {
@@ -132,7 +145,7 @@ void MainWindow::onTriggerScenarioBatch(SimulationScenario scenario, size_t coun
     }
     statusBar()->showMessage(QString("Processed batch of %1 transactions for scenario: %2")
         .arg(count)
-        .arg(QString::fromStdString(toString(scenario))));
+        .arg(scenarioToString(scenario)));
 }
 
 void MainWindow::onStartContinuousStream(int interval_ms) {
@@ -146,7 +159,7 @@ void MainWindow::onPauseContinuousStream() {
 }
 
 void MainWindow::onStreamTimerTick() {
-    Transaction tx = simulator_.generateTransaction(SimulationScenario::MIXED_REALISTIC_TRAFFIC);
+    Transaction tx = simulator_.generateSingleTransaction(SimulationScenario::MIXED_REALISTIC_TRAFFIC);
     onProcessSingleTransaction(tx);
 }
 

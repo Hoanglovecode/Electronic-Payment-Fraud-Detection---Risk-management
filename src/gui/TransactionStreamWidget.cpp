@@ -98,7 +98,8 @@ void TransactionStreamWidget::updateTableRow(int row, const EvaluatedTxRecord& r
     table_->setItem(row, 5, itemScore);
 
     // Decision Badge
-    auto* itemDecision = new QTableWidgetItem(QString::fromStdString(toString(rec.decision.action)));
+    auto act_str = toString(rec.decision.action);
+    auto* itemDecision = new QTableWidgetItem(QString::fromUtf8(act_str.data(), static_cast<qsizetype>(act_str.size())));
     itemDecision->setTextAlignment(Qt::AlignCenter);
 
     switch (rec.decision.action) {

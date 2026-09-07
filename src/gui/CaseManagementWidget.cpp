@@ -153,10 +153,12 @@ void CaseManagementWidget::refreshCaseTable() {
         tblCases_->setItem(row, 0, new QTableWidgetItem(QString::fromStdString(c.getCaseId())));
         tblCases_->setItem(row, 1, new QTableWidgetItem(QString::fromStdString(c.getTransactionId())));
         tblCases_->setItem(row, 2, new QTableWidgetItem(QString::fromStdString(c.getCustomerId())));
-        tblCases_->setItem(row, 3, new QTableWidgetItem(QString::number(c.getRiskScore(), 'f', 1)));
-        tblCases_->setItem(row, 4, new QTableWidgetItem(QString::fromStdString(toString(c.getOriginalDecision()))));
+        tblCases_->setItem(row, 3, new QTableWidgetItem(QString::number(c.getInitialRiskScore(), 'f', 1)));
+        auto orig_dec_str = toString(c.getOriginalDecision());
+        tblCases_->setItem(row, 4, new QTableWidgetItem(QString::fromUtf8(orig_dec_str.data(), static_cast<qsizetype>(orig_dec_str.size()))));
 
-        auto* itemStatus = new QTableWidgetItem(QString::fromStdString(toString(c.getStatus())));
+        auto st_str = toString(c.getStatus());
+        auto* itemStatus = new QTableWidgetItem(QString::fromUtf8(st_str.data(), static_cast<qsizetype>(st_str.size())));
         if (c.getStatus() == CaseStatus::RESOLVED_CONFIRMED_FRAUD) {
             itemStatus->setForeground(QColor("#f85149")); // Red
         } else if (c.getStatus() == CaseStatus::RESOLVED_FALSE_POSITIVE) {
@@ -165,11 +167,11 @@ void CaseManagementWidget::refreshCaseTable() {
             itemStatus->setForeground(QColor("#d29922")); // Yellow
         }
         tblCases_->setItem(row, 5, itemStatus);
-        tblCases_->setItem(row, 6, new QTableWidgetItem(QString::fromStdString(c.getAssignedAnalyst())));
+        tblCases_->setItem(row, 6, new QTableWidgetItem(QString::fromStdString(c.getAssignedAnalystId())));
     }
     lblStatus_->setText(QString("Cases in queue: %1 | Ground Truth Records: %2")
         .arg(case_ids_.size())
-        .arg(label_store_->totalLabels()));
+        .arg(label_store_->size()));
 }
 
 void CaseManagementWidget::onCaseSelected(int row, int column) {
@@ -181,12 +183,13 @@ void CaseManagementWidget::onCaseSelected(int row, int column) {
     if (!c_opt.has_value()) return;
     const auto& c = c_opt.value();
 
+    auto sel_st_str = toString(c.getStatus());
     lblSelectedCase_->setText(QString("Selected: %1 (%2)")
         .arg(QString::fromStdString(c.getCaseId()))
-        .arg(QString::fromStdString(toString(c.getStatus()))));
+        .arg(QString::fromUtf8(sel_st_str.data(), static_cast<qsizetype>(sel_st_str.size()))));
 
-    if (!c.getAssignedAnalyst().empty()) {
-        cmbAnalyst_->setCurrentText(QString::fromStdString(c.getAssignedAnalyst()));
+    if (!c.getAssignedAnalystId().empty()) {
+        cmbAnalyst_->setCurrentText(QString::fromStdString(c.getAssignedAnalystId()));
     }
 }
 

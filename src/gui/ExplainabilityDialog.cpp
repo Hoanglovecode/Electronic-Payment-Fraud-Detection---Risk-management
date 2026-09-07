@@ -126,21 +126,24 @@ void ExplainabilityDialog::populateData() {
             break;
     }
     lblDecisionBadge_->setStyleSheet(badge_style + " font-weight: bold; padding: 4px 10px; border-radius: 4px;");
+    auto rlvl_str = toString(decision_.risk_level);
     lblRiskScore_->setText(QString("Risk Score: %1 / 100 (%2)")
         .arg(QString::number(decision_.risk_score, 'f', 1))
-        .arg(QString::fromStdString(toString(decision_.risk_level))));
+        .arg(QString::fromUtf8(rlvl_str.data(), static_cast<qsizetype>(rlvl_str.size()))));
     pbRisk_->setValue(static_cast<int>(decision_.risk_score));
 
     // Populate Alerts
-    tblAlerts_->setRowCount(static_cast<int>(risk_.triggered_alerts.size()));
-    for (size_t i = 0; i < risk_.triggered_alerts.size(); ++i) {
-        const auto& alert = risk_.triggered_alerts[i];
-        tblAlerts_->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::fromStdString(alert.rule_name)));
-        tblAlerts_->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromStdString(toString(alert.severity))));
-        tblAlerts_->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::number(alert.risk_score, 'f', 1)));
-        tblAlerts_->setItem(static_cast<int>(i), 3, new QTableWidgetItem(QString::fromStdString(alert.reason)));
+    const auto& alerts = risk_.getAlerts();
+    tblAlerts_->setRowCount(static_cast<int>(alerts.size()));
+    for (size_t i = 0; i < alerts.size(); ++i) {
+        const auto& alert = alerts[i];
+        tblAlerts_->setItem(static_cast<int>(i), 0, new QTableWidgetItem(QString::fromStdString(alert.getRuleName())));
+        auto sev_str = toString(alert.getSeverity());
+        tblAlerts_->setItem(static_cast<int>(i), 1, new QTableWidgetItem(QString::fromUtf8(sev_str.data(), static_cast<qsizetype>(sev_str.size()))));
+        tblAlerts_->setItem(static_cast<int>(i), 2, new QTableWidgetItem(QString::number(alert.getScoreContribution(), 'f', 1)));
+        tblAlerts_->setItem(static_cast<int>(i), 3, new QTableWidgetItem(QString::fromStdString(alert.getReason())));
     }
-    if (risk_.triggered_alerts.empty()) {
+    if (alerts.empty()) {
         tblAlerts_->setRowCount(1);
         tblAlerts_->setItem(0, 0, new QTableWidgetItem("No rules triggered"));
         tblAlerts_->setItem(0, 1, new QTableWidgetItem("NONE"));
@@ -150,24 +153,24 @@ void ExplainabilityDialog::populateData() {
 
     // Populate 18 Features (in 2-column layout)
     std::vector<std::pair<QString, QString>> feat_pairs = {
-        {"Amount ($)", QString::number(features_.amount, 'f', 2)},
-        {"Hour of Day", QString::number(features_.hour_of_day)},
-        {"Day of Week", QString::number(features_.day_of_week)},
-        {"Is Weekend", features_.is_weekend ? "Yes (1.0)" : "No (0.0)"},
-        {"Velocity (5 min)", QString::number(features_.tx_velocity_5m)},
-        {"Velocity (1 hour)", QString::number(features_.tx_velocity_1h)},
-        {"Velocity (24 hour)", QString::number(features_.tx_velocity_24h)},
-        {"Amount Sum (24h)", QString::number(features_.amount_sum_24h, 'f', 2)},
-        {"Deviation Ratio", QString::number(features_.amount_to_avg_ratio, 'f', 2)},
-        {"Is New Device", features_.is_new_device ? "Yes (1.0)" : "No (0.0)"},
-        {"Device Risk Flag", features_.device_risk_flag ? "ROOTED/EMULATOR (1.0)" : "Safe (0.0)"},
-        {"IP Diversity (24h)", QString::number(features_.ip_diversity_24h)},
-        {"Device Diversity (24h)", QString::number(features_.device_diversity_24h)},
-        {"Geo Distance (km)", QString::number(features_.geo_distance_km, 'f', 2)},
-        {"Speed (km/h)", QString::number(features_.speed_kmh, 'f', 2)},
-        {"Is Cross-Border", features_.is_cross_border ? "Yes (1.0)" : "No (0.0)"},
-        {"Merchant Risk Score", QString::number(features_.merchant_risk_score, 'f', 2)},
-        {"Is High-Risk MCC", features_.is_high_risk_mcc ? "Yes (1.0)" : "No (0.0)"}
+        {"Amount ($)", QString::number(features_.transaction_amount, 'f', 2)},
+        {"Hour of Day", QString::number(features_.hour_of_day, 'f', 0)},
+        {"Is Weekend", features_.is_weekend > 0.5 ? "Yes (1.0)" : "No (0.0)"},
+        {"Velocity (5 min)", QString::number(features_.transactions_last_5min, 'f', 0)},
+        {"Amount Sum (5m)", QString::number(features_.amount_sum_last_5min, 'f', 2)},
+        {"Velocity (1 hour)", QString::number(features_.transactions_last_1hour, 'f', 0)},
+        {"Amount Sum (1h)", QString::number(features_.amount_sum_last_1hour, 'f', 2)},
+        {"Velocity (24 hour)", QString::number(features_.transactions_last_24hours, 'f', 0)},
+        {"Amount Sum (24h)", QString::number(features_.amount_sum_last_24hours, 'f', 2)},
+        {"Avg Amount (24h)", QString::number(features_.average_amount_24h, 'f', 2)},
+        {"Deviation Ratio", QString::number(features_.amount_deviation_ratio, 'f', 2)},
+        {"Is New Device", features_.is_new_device > 0.5 ? "Yes (1.0)" : "No (0.0)"},
+        {"Device Risk Flag", features_.is_high_risk_device > 0.5 ? "ROOTED/EMULATOR (1.0)" : "Safe (0.0)"},
+        {"Accounts on Device", QString::number(features_.accounts_on_device_count, 'f', 0)},
+        {"Is New Country", features_.is_new_country > 0.5 ? "Yes (1.0)" : "No (0.0)"},
+        {"Geo Distance (km)", QString::number(features_.distance_from_home_km, 'f', 2)},
+        {"Speed (km/h)", QString::number(features_.speed_from_last_tx_kmh, 'f', 2)},
+        {"Is High-Risk MCC", features_.is_high_risk_mcc > 0.5 ? "Yes (1.0)" : "No (0.0)"}
     };
 
     tblFeatures_->setRowCount(9);
