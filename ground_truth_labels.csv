@@ -1,0 +1,4 @@
+transaction_amount,hour_of_day,is_weekend,transactions_last_5min,amount_sum_last_5min,transactions_last_1hour,amount_sum_last_1hour,transactions_last_24hours,amount_sum_last_24hours,average_amount_24h,amount_deviation_ratio,is_new_device,is_high_risk_device,accounts_on_device_count,is_new_country,distance_from_home_km,speed_from_last_tx_kmh,is_high_risk_mcc,is_fraud
+0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,1
+0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0
+0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0

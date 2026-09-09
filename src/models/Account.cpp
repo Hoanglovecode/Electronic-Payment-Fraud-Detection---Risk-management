@@ -1,41 +1,51 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Bank Account Implementation
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ */
+
 #include "epfd/models/Account.hpp"
 #include <sstream>
 #include <stdexcept>
 
+using namespace std;
+
 namespace epfd {
 
-Account::Account(std::string account_id,
-                 std::string customer_id,
+Account::Account(string account_id,
+                 string customer_id,
                  double initial_balance,
-                 std::string currency,
+                 string currency,
                  Timestamp created_at)
-    : account_id_(std::move(account_id)),
-      customer_id_(std::move(customer_id)),
+    : account_id_(move(account_id)),
+      customer_id_(move(customer_id)),
       balance_(initial_balance),
-      currency_(std::move(currency)),
+      currency_(move(currency)),
       created_at_(created_at) {
     if (balance_ < 0.0) {
-        throw std::invalid_argument("Initial account balance cannot be negative");
+        throw invalid_argument("Initial account balance cannot be negative");
     }
 }
 
 void Account::deposit(double amount) {
     if (amount <= 0.0) {
-        throw std::invalid_argument("Deposit amount must be strictly positive");
+        throw invalid_argument("Deposit amount must be strictly positive");
     }
     if (is_frozen_ || is_closed_) {
-        throw std::runtime_error("Cannot deposit to a frozen or closed account");
+        throw runtime_error("Cannot deposit to a frozen or closed account");
     }
     balance_ += amount;
 }
 
 bool Account::withdraw(double amount) {
     if (amount <= 0.0) {
-        throw std::invalid_argument("Withdrawal amount must be strictly positive");
+        throw invalid_argument("Withdrawal amount must be strictly positive");
     }
+    // Không thể rút tiền nếu tài khoản bị đóng hoặc đóng băng
     if (is_frozen_ || is_closed_) {
         return false;
     }
+    // Đảm bảo số dư khả dụng
     if (balance_ < amount) {
         return false;
     }
@@ -50,8 +60,8 @@ bool Account::hasSufficientBalance(double amount) const noexcept {
     return balance_ >= amount;
 }
 
-std::string Account::toString() const {
-    std::ostringstream oss;
+string Account::toString() const {
+    ostringstream oss;
     oss << "Account[id=" << account_id_ 
         << ", customer=" << customer_id_ 
         << ", balance=" << balance_ << " " << currency_ 

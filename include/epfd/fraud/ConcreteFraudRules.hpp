@@ -1,3 +1,14 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Concrete Fraud Detection Rules (Inheritance Hierarchy)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Inheritance: Các luật cụ thể kế thừa từ BaseFraudRule, tái sử dụng thuộc tính chung (id, name, weight)
+ *   và ghi đè phương thức ảo evaluate() để hiện thực logic kiểm tra nghiệp vụ riêng biệt.
+ * - Single Responsibility Principle (SRP): Mỗi class chỉ chịu trách nhiệm đánh giá một dấu hiệu gian lận duy nhất.
+ */
+
 #ifndef EPFD_FRAUD_CONCRETE_FRAUD_RULES_HPP
 #define EPFD_FRAUD_CONCRETE_FRAUD_RULES_HPP
 

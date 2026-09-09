@@ -1,3 +1,18 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Customer Profile & Risk Governance
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Composition vs Aggregation:
+ *   + Customer <-> Account (Composition): Khách hàng trực tiếp sở hữu tài khoản, 
+ *     quản lý vòng đời tài khoản thanh toán trong ngân hàng.
+ *   + Customer <-> Device / PaymentMethod (Aggregation): Khách hàng liên kết với thiết bị/thẻ,
+ *     nhưng các thực thể này tồn tại độc lập bên ngoài và có thể dùng chung giữa nhiều người.
+ * - Encapsulation: Điểm rủi ro (risk_score) chỉ được cập nhật có kiểm soát qua setRiskScore()
+ *   và tự động đồng bộ sang mức độ rủi ro (RiskLevel) tương ứng.
+ */
+
 #ifndef EPFD_MODELS_CUSTOMER_HPP
 #define EPFD_MODELS_CUSTOMER_HPP
 
@@ -21,7 +36,7 @@ public:
              bool is_vip = false,
              Timestamp created_at = std::chrono::system_clock::now());
 
-    // Getters
+    // Basic accessors
     const std::string& getCustomerId() const noexcept { return customer_id_; }
     const std::string& getFullName() const noexcept { return full_name_; }
     const std::string& getEmail() const noexcept { return email_; }

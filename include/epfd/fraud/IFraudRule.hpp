@@ -1,3 +1,15 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Fraud Rule Abstraction & Interface
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Abstraction & Strategy Pattern: IFraudRule định nghĩa giao diện trừu tượng thuần túy
+ *   cho mọi thuật toán phát hiện gian lận (Single Responsibility & Open/Closed Principle).
+ * - Virtual Destructor: virtual ~IFraudRule() = default giúp tránh rò rỉ bộ nhớ (memory leak)
+ *   khi hủy đối tượng con thông qua con trỏ lớp cơ sở std::shared_ptr<IFraudRule>.
+ */
+
 #ifndef EPFD_FRAUD_I_FRAUD_RULE_HPP
 #define EPFD_FRAUD_I_FRAUD_RULE_HPP
 
@@ -9,10 +21,6 @@
 
 namespace epfd {
 
-/**
- * @brief Strategy interface for individual fraud detection rules (OCP & SRP).
- * New fraud rules can be added without modifying existing rule evaluation logic.
- */
 class IFraudRule {
 public:
     virtual ~IFraudRule() = default;

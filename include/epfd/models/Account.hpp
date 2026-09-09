@@ -1,3 +1,14 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Bank Account Model
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Encapsulation: balance_ là private và chỉ được thay đổi qua deposit() / withdraw(),
+ *   ngăn ngừa số dư âm hoặc sửa đổi bất hợp pháp ngoài luồng nghiệp vụ.
+ * - Invariant: Tài khoản bị đóng (closed) hoặc đóng băng (frozen) sẽ từ chối mọi giao dịch.
+ */
+
 #ifndef EPFD_MODELS_ACCOUNT_HPP
 #define EPFD_MODELS_ACCOUNT_HPP
 
@@ -16,7 +27,7 @@ public:
             std::string currency = "USD",
             Timestamp created_at = std::chrono::system_clock::now());
 
-    // Getters
+    // Basic getters
     const std::string& getAccountId() const noexcept { return account_id_; }
     const std::string& getCustomerId() const noexcept { return customer_id_; }
     double getBalance() const noexcept { return balance_; }

@@ -1,3 +1,16 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Fraud Detector Rule Engine (Polymorphism & Open/Closed Principle)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Polymorphism (Tính đa hình): Quản lý tập hợp các con trỏ đa hình std::shared_ptr<IFraudRule>.
+ *   Khi thực thi hàm detect(), engine gọi rule->evaluate() và C++ tự động kích hoạt logic của
+ *   lớp con tương ứng qua con trỏ vptr / bảng vtable.
+ * - Open/Closed Principle (OCP): Đóng cho sửa đổi (không sửa core engine), mở cho mở rộng
+ *   (dễ dàng thêm luật gian lận mới bằng addRule()).
+ */
+
 #ifndef EPFD_FRAUD_FRAUD_DETECTOR_ENGINE_HPP
 #define EPFD_FRAUD_FRAUD_DETECTOR_ENGINE_HPP
 
@@ -10,10 +23,6 @@
 
 namespace epfd {
 
-/**
- * @brief Composite Rule Engine for rule-based fraud evaluation (Open/Closed Principle).
- * Evaluates configured fraud rules, aggregates alerts, and computes rule-based fraud scores.
- */
 class FraudDetectorEngine : public IFraudDetector {
 public:
     explicit FraudDetectorEngine(std::string name = "RuleBasedFraudDetectorEngine",

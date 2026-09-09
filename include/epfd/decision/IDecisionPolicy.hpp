@@ -1,3 +1,14 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Decision Engine & Policy Abstraction (Strategy Pattern)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Strategy Pattern: IDecisionPolicy định nghĩa chiến lược ra quyết định (APPROVE, CHALLENGE_3DS, REVIEW, BLOCK).
+ *   Hệ thống có thể linh hoạt chuyển đổi giữa StandardPolicy, StrictPolicy hoặc VipPolicy tại runtime.
+ * - DecisionAction Enum: Đại diện cho máy trạng thái quyết định của nghiệp vụ ngân hàng.
+ */
+
 #ifndef EPFD_DECISION_I_DECISION_POLICY_HPP
 #define EPFD_DECISION_I_DECISION_POLICY_HPP
 
@@ -11,9 +22,6 @@
 
 namespace epfd {
 
-/**
- * @brief Rich, explainable decision outcome containing all audit metadata.
- */
 struct DecisionResult {
     std::string decision_id;
     std::string transaction_id;

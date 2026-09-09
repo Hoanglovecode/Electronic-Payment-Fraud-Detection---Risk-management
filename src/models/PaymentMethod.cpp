@@ -1,37 +1,46 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Payment Method Implementation (Factory Pattern & Luhn Check)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ */
+
 #include "epfd/models/PaymentMethod.hpp"
 #include <algorithm>
 #include <cctype>
 #include <sstream>
 
+using namespace std;
+
 namespace epfd {
 
-PaymentMethod::PaymentMethod(std::string payment_id,
+PaymentMethod::PaymentMethod(string payment_id,
                              PaymentType type,
-                             const std::string& raw_or_masked_pan,
-                             std::string card_holder_name,
+                             const string& raw_or_masked_pan,
+                             string card_holder_name,
                              int expiry_month,
                              int expiry_year,
-                             std::string billing_country)
-    : payment_id_(std::move(payment_id)),
+                             string billing_country)
+    : payment_id_(move(payment_id)),
       type_(type),
-      card_holder_name_(std::move(card_holder_name)),
+      card_holder_name_(move(card_holder_name)),
       expiry_month_(expiry_month),
       expiry_year_(expiry_year),
-      billing_country_(std::move(billing_country)) {
+      billing_country_(move(billing_country)) {
     
-    std::string clean_pan;
+    // Làm sạch chuỗi số thẻ: chỉ giữ lại chữ số và dấu *
+    string clean_pan;
     for (char c : raw_or_masked_pan) {
-        if (std::isdigit(static_cast<unsigned char>(c)) || c == '*') {
+        if (isdigit(static_cast<unsigned char>(c)) || c == '*') {
             clean_pan.push_back(c);
         }
     }
 
     if (clean_pan.length() >= 10) {
-        // Extract BIN (first 6 digits)
+        // Trích xuất BIN (6 chữ số đầu) để nhận diện ngân hàng phát hành
         card_bin_ = clean_pan.substr(0, 6);
-        // Extract Last 4
+        // Trích xuất 4 chữ số cuối (Last4)
         last4_ = clean_pan.substr(clean_pan.length() - 4);
-        // Mask the PAN
+        // Tự động mask các chữ số ở giữa theo chuẩn PCI-DSS
         masked_card_number_ = maskPan(clean_pan);
     } else {
         masked_card_number_ = raw_or_masked_pan;
@@ -41,21 +50,23 @@ PaymentMethod::PaymentMethod(std::string payment_id,
     }
 }
 
-PaymentMethod PaymentMethod::createBankTransfer(std::string payment_id, std::string account_number, std::string bank_name) {
+// Factory Method: Tạo đối tượng thanh toán chuyển khoản ngân hàng
+PaymentMethod PaymentMethod::createBankTransfer(string payment_id, string account_number, string bank_name) {
     PaymentMethod pm;
-    pm.payment_id_ = std::move(payment_id);
+    pm.payment_id_ = move(payment_id);
     pm.type_ = PaymentType::BANK_TRANSFER;
-    pm.card_holder_name_ = std::move(bank_name);
+    pm.card_holder_name_ = move(bank_name);
     pm.masked_card_number_ = "ACC-" + (account_number.length() > 4 ? account_number.substr(account_number.length() - 4) : account_number);
     pm.last4_ = account_number.length() >= 4 ? account_number.substr(account_number.length() - 4) : account_number;
     return pm;
 }
 
-PaymentMethod PaymentMethod::createEWallet(std::string payment_id, std::string wallet_id, std::string provider) {
+// Factory Method: Tạo đối tượng ví điện tử (MoMo, ZaloPay, ApplePay...)
+PaymentMethod PaymentMethod::createEWallet(string payment_id, string wallet_id, string provider) {
     PaymentMethod pm;
-    pm.payment_id_ = std::move(payment_id);
+    pm.payment_id_ = move(payment_id);
     pm.type_ = PaymentType::E_WALLET;
-    pm.card_holder_name_ = std::move(provider);
+    pm.card_holder_name_ = move(provider);
     pm.masked_card_number_ = "WALLET-" + (wallet_id.length() > 4 ? wallet_id.substr(wallet_id.length() - 4) : wallet_id);
     pm.last4_ = wallet_id.length() >= 4 ? wallet_id.substr(wallet_id.length() - 4) : wallet_id;
     return pm;
@@ -78,14 +89,16 @@ bool PaymentMethod::isExpired(int current_year, int current_month) const noexcep
     return false;
 }
 
-bool PaymentMethod::validateLuhn(const std::string& raw_pan) noexcept {
-    std::string digits;
+// Thuật toán kiểm tra số thẻ hợp lệ Luhn (Mod 10 Checksum)
+bool PaymentMethod::validateLuhn(const string& raw_pan) noexcept {
+    string digits;
     for (char c : raw_pan) {
-        if (std::isdigit(static_cast<unsigned char>(c))) {
+        if (isdigit(static_cast<unsigned char>(c))) {
             digits.push_back(c);
         }
     }
 
+    // Độ dài tiêu chuẩn thẻ tín dụng quốc tế (13-19 chữ số)
     if (digits.length() < 13 || digits.length() > 19) {
         return false;
     }
@@ -107,10 +120,11 @@ bool PaymentMethod::validateLuhn(const std::string& raw_pan) noexcept {
     return (sum % 10 == 0);
 }
 
-std::string PaymentMethod::maskPan(const std::string& raw_pan) {
-    std::string digits;
+// Hàm mask số thẻ: Giữ 6 số đầu, 4 số cuối, thay thế các số ở giữa bằng dấu *
+string PaymentMethod::maskPan(const string& raw_pan) {
+    string digits;
     for (char c : raw_pan) {
-        if (std::isdigit(static_cast<unsigned char>(c)) || c == '*') {
+        if (isdigit(static_cast<unsigned char>(c)) || c == '*') {
             digits.push_back(c);
         }
     }
@@ -119,7 +133,7 @@ std::string PaymentMethod::maskPan(const std::string& raw_pan) {
         return digits;
     }
 
-    std::string masked = digits;
+    string masked = digits;
     size_t prefix_len = 6;
     size_t suffix_len = 4;
     for (size_t i = prefix_len; i < digits.length() - suffix_len; ++i) {
@@ -128,8 +142,8 @@ std::string PaymentMethod::maskPan(const std::string& raw_pan) {
     return masked;
 }
 
-std::string PaymentMethod::toString() const {
-    std::ostringstream oss;
+string PaymentMethod::toString() const {
+    ostringstream oss;
     oss << "PaymentMethod[id=" << payment_id_ 
         << ", type=" << epfd::toString(type_)
         << ", masked=" << masked_card_number_ 

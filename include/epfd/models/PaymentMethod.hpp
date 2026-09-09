@@ -1,3 +1,15 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Payment Method Model (Factory Method Pattern & Encapsulation)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Factory Method Pattern: Cung cấp các static factory (createBankTransfer, createEWallet)
+ *   để tạo đối tượng phương thức thanh toán an toàn, che giấu logic tiền xử lý phức tạp.
+ * - Information Hiding (PCI-DSS): Che giấu số thẻ nhạy cảm (PAN), chỉ lưu 6 số đầu (BIN)
+ *   và 4 số cuối (Last4), tuyệt đối không lưu mã CVV.
+ */
+
 #ifndef EPFD_MODELS_PAYMENT_METHOD_HPP
 #define EPFD_MODELS_PAYMENT_METHOD_HPP
 
@@ -10,10 +22,7 @@ class PaymentMethod {
 public:
     PaymentMethod() = default;
 
-    /**
-     * @brief Safe constructor that automatically masks PAN and extracts BIN / Last4.
-     * Raw CVV is never stored.
-     */
+    // Safe constructor: Tự động mask PAN và trích xuất BIN / Last4
     PaymentMethod(std::string payment_id,
                   PaymentType type,
                   const std::string& raw_or_masked_pan,

@@ -1,3 +1,18 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Risk Management Engine (Composition & Dependency Injection)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Composition (Quan hệ Has-A): RiskEngine tổng hợp năng lực từ 4 component độc lập:
+ *   + FraudDetectorEngine: Động cơ đánh giá tập luật chuyên gia.
+ *   + IModelPredictor: Mô hình học máy dự đoán xác suất rủi ro.
+ *   + RiskAggregator: Bộ tổng hợp trọng số đa yếu tố.
+ *   + FeatureExtractor: Bộ trích xuất 18 đặc trưng giao dịch.
+ * - Dependency Injection: Nhận các thành phần phụ thuộc qua constructor, giảm sự phụ thuộc cứng (loose coupling)
+ *   và giúp viết unit test dễ dàng.
+ */
+
 #ifndef EPFD_RISK_RISK_ENGINE_HPP
 #define EPFD_RISK_RISK_ENGINE_HPP
 
@@ -16,9 +31,6 @@
 
 namespace epfd {
 
-/**
- * @brief Master Risk Management Engine aggregating ML, Rule Engine, and Domain Context.
- */
 class RiskEngine {
 public:
     RiskEngine(std::shared_ptr<IRiskPolicy> policy = nullptr,

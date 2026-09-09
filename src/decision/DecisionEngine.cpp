@@ -1,48 +1,58 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Decision Engine Implementation (Strategy & Observer Patterns)
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ */
+
 #include "epfd/decision/DecisionEngine.hpp"
 #include <algorithm>
 
+using namespace std;
+
 namespace epfd {
 
-DecisionEngine::DecisionEngine(std::shared_ptr<IDecisionPolicy> policy,
-                               std::shared_ptr<RiskEngine> risk_engine,
-                               std::shared_ptr<InvestigationPriorityQueue> review_queue)
-    : policy_(std::move(policy)),
-      risk_engine_(std::move(risk_engine)),
-      review_queue_(std::move(review_queue)) {
+DecisionEngine::DecisionEngine(shared_ptr<IDecisionPolicy> policy,
+                               shared_ptr<RiskEngine> risk_engine,
+                               shared_ptr<InvestigationPriorityQueue> review_queue)
+    : policy_(move(policy)),
+      risk_engine_(move(risk_engine)),
+      review_queue_(move(review_queue)) {
     if (!policy_) {
-        policy_ = std::make_shared<StandardDecisionPolicy>();
+        policy_ = make_shared<StandardDecisionPolicy>();
     }
 }
 
+// Strategy Pattern: Đổi chính sách duyệt động theo assessment
 DecisionResult DecisionEngine::evaluate(const RiskAssessment& assessment) {
-    std::shared_ptr<IDecisionPolicy> current_policy;
-    std::shared_ptr<InvestigationPriorityQueue> current_queue;
-    std::vector<std::shared_ptr<IObserver<DecisionResult>>> current_observers;
+    shared_ptr<IDecisionPolicy> current_policy;
+    shared_ptr<InvestigationPriorityQueue> current_queue;
+    vector<shared_ptr<IObserver<DecisionResult>>> current_observers;
 
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_guard<mutex> lock(mutex_);
         current_policy = policy_;
         current_queue = review_queue_;
         current_observers = observers_;
     }
 
     if (!current_policy) {
-        current_policy = std::make_shared<StandardDecisionPolicy>();
+        current_policy = make_shared<StandardDecisionPolicy>();
     }
 
+    // Thực thi chiến lược hiện tại (Polymorphic call)
     DecisionResult result = current_policy->decide(assessment);
 
-    // If decision mandates manual investigation, automatically push to InvestigationPriorityQueue
+    // Nếu kết quả là REVIEW: tự động đẩy ca điều tra vào hàng đợi ưu tiên (Priority Queue O(log N))
     if (result.isReviewed() && current_queue) {
         InvestigationCase ic;
         ic.case_id = "CASE_" + assessment.getTransactionId();
         ic.transaction_id = assessment.getTransactionId();
         ic.risk_score = assessment.getCombinedScore();
         ic.severity = assessment.getRiskLevel();
-        current_queue->push(std::move(ic));
+        current_queue->push(move(ic));
     }
 
-    // Broadcast decision to all attached observers
+    // Observer Pattern: Phát thông báo sự kiện quyết định tới tất cả Observer đã đăng ký
     for (const auto& obs : current_observers) {
         if (obs) {
             obs->onNotify(result);
@@ -53,9 +63,9 @@ DecisionResult DecisionEngine::evaluate(const RiskAssessment& assessment) {
 }
 
 DecisionResult DecisionEngine::evaluate(const Transaction& tx, const RiskProfile& profile) {
-    std::shared_ptr<RiskEngine> current_risk_engine;
+    shared_ptr<RiskEngine> current_risk_engine;
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_guard<mutex> lock(mutex_);
         current_risk_engine = risk_engine_;
     }
 
@@ -63,7 +73,7 @@ DecisionResult DecisionEngine::evaluate(const Transaction& tx, const RiskProfile
     if (current_risk_engine) {
         assessment = current_risk_engine->assess(tx, profile);
     } else {
-        // Fallback default assessment if risk engine not wired
+        // Fallback an toàn nếu chưa gắn RiskEngine
         assessment = RiskAssessment("ASM_" + tx.getTransactionId(), tx.getTransactionId(), 0.0, 0.0, 0.0,
                                     RiskLevel::VERY_LOW, DecisionAction::APPROVE);
     }
@@ -71,42 +81,43 @@ DecisionResult DecisionEngine::evaluate(const Transaction& tx, const RiskProfile
     return evaluate(assessment);
 }
 
-void DecisionEngine::setPolicy(std::shared_ptr<IDecisionPolicy> policy) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    policy_ = std::move(policy);
+void DecisionEngine::setPolicy(shared_ptr<IDecisionPolicy> policy) {
+    lock_guard<mutex> lock(mutex_);
+    policy_ = move(policy);
 }
 
-std::shared_ptr<IDecisionPolicy> DecisionEngine::getPolicy() const {
-    std::lock_guard<std::mutex> lock(mutex_);
+shared_ptr<IDecisionPolicy> DecisionEngine::getPolicy() const {
+    lock_guard<mutex> lock(mutex_);
     return policy_;
 }
 
-void DecisionEngine::setRiskEngine(std::shared_ptr<RiskEngine> risk_engine) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    risk_engine_ = std::move(risk_engine);
+void DecisionEngine::setRiskEngine(shared_ptr<RiskEngine> risk_engine) {
+    lock_guard<mutex> lock(mutex_);
+    risk_engine_ = move(risk_engine);
 }
 
-void DecisionEngine::setInvestigationQueue(std::shared_ptr<InvestigationPriorityQueue> queue) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    review_queue_ = std::move(queue);
+void DecisionEngine::setInvestigationQueue(shared_ptr<InvestigationPriorityQueue> queue) {
+    lock_guard<mutex> lock(mutex_);
+    review_queue_ = move(queue);
 }
 
-void DecisionEngine::attachObserver(std::shared_ptr<IObserver<DecisionResult>> observer) {
-    std::lock_guard<std::mutex> lock(mutex_);
+// Observer Pattern management
+void DecisionEngine::attachObserver(shared_ptr<IObserver<DecisionResult>> observer) {
+    lock_guard<mutex> lock(mutex_);
     if (observer) {
-        observers_.push_back(std::move(observer));
+        observers_.push_back(move(observer));
     }
 }
 
-void DecisionEngine::detachObserver(std::shared_ptr<IObserver<DecisionResult>> observer) {
-    std::lock_guard<std::mutex> lock(mutex_);
-    observers_.erase(std::remove(observers_.begin(), observers_.end(), observer), observers_.end());
+void DecisionEngine::detachObserver(shared_ptr<IObserver<DecisionResult>> observer) {
+    lock_guard<mutex> lock(mutex_);
+    observers_.erase(remove(observers_.begin(), observers_.end(), observer), observers_.end());
 }
 
 void DecisionEngine::notifyObservers(const DecisionResult& result) {
-    std::vector<std::shared_ptr<IObserver<DecisionResult>>> copy_observers;
+    vector<shared_ptr<IObserver<DecisionResult>>> copy_observers;
     {
-        std::lock_guard<std::mutex> lock(mutex_);
+        lock_guard<mutex> lock(mutex_);
         copy_observers = observers_;
     }
     for (const auto& obs : copy_observers) {

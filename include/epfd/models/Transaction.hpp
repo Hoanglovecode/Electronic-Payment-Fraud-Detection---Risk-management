@@ -1,3 +1,16 @@
+/*
+ * EPFD-RAS: Electronic Payment Fraud Detection & Risk Management System
+ * Module: Transaction Domain Model
+ * Team Members: Hoang, Khiem, Triet (OOP Project)
+ *
+ * OOP Design Notes:
+ * - Encapsulation: Dữ liệu giao dịch được đóng gói an toàn (private members).
+ * - Immutability: transaction_id và timestamp không có hàm setter sau khi tạo, 
+ *   vì trong thực tế giao dịch ngân hàng đã phát sinh là bất biến (Audit requirement).
+ * - State Transitions: Mô hình hóa máy trạng thái với các chuyển đổi hợp lệ 
+ *   (PENDING -> APPROVED / REVIEW / CHALLENGED -> SETTLED/CHARGEBACK).
+ */
+
 #ifndef EPFD_MODELS_TRANSACTION_HPP
 #define EPFD_MODELS_TRANSACTION_HPP
 
@@ -27,7 +40,7 @@ public:
                 std::string merchant_id,
                 PaymentMethod payment_method);
 
-    // Getters
+    // Getters - Truy xuất dữ liệu an toàn (const noexcept)
     const std::string& getTransactionId() const noexcept { return transaction_id_; }
     TransactionType getType() const noexcept { return type_; }
     const std::string& getCustomerId() const noexcept { return customer_id_; }
